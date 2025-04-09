@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../models/UserModel";
-import { generateToken } from "../utils/jwt";
+import { generateToken } from "../controllers/AuthController";
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;

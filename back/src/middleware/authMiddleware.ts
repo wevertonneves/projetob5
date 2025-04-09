@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../utils/jwt";
+import { verifyToken } from "../controllers/AuthController";
+// 🔹 Importação correta
 
 export const authMiddleware = (
   req: Request,
@@ -17,7 +18,7 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = verifyToken(token);
+    const decoded = verifyToken(token); // 🔹 Usa a função correta agora
     console.log("✅ Token decodificado:", decoded);
 
     if (!decoded) {
@@ -25,7 +26,7 @@ export const authMiddleware = (
       return res.status(401).json({ error: "Token inválido" });
     }
 
-    (req as any).user = decoded;
+    (req as any).user = decoded; // 🔹 Adiciona o usuário decodificado à requisição
     next();
   } catch (error) {
     console.log("⛔ Erro ao verificar token:", error);

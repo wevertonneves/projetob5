@@ -1,21 +1,35 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/database";
 import bcrypt from "bcrypt";
 
-class UserModel extends Model {
-  id: number | undefined;
-  name: string | undefined;
-  email: string | undefined;
-  password: string | undefined;
+// Interface para os atributos do usuário
+interface UserAttributes {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+}
+
+// Interface para criação de usuários (id opcional)
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+
+// Definição do modelo
+class UserModel extends Model<UserAttributes, UserCreationAttributes> {
+  public id!: number;
+  public name!: string;
+  public email!: string;
+  public password!: string;
 
   public async hashPassword() {
-    this.password = await bcrypt.hash(this.password!, 10);
+    this.password = await bcrypt.hash(this.password, 10);
   }
-  public async validatePassword(password: string): Promise<boolean> {
-    return await bcrypt.compare(password, this.password!);
-  }
-} // Nome do modelo no singular
 
+  public async validatePassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password);
+  }
+}
+
+// Inicializa o modelo no Sequelize
 UserModel.init(
   {
     id: {
@@ -30,28 +44,29 @@ UserModel.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
   },
-
   {
     sequelize,
-    modelName: "UserModel", // Nome do modelo no singular
-    tableName: "users", // Nome da tabela no banco de dados
-    timestamps: true, // Desativa os campos createdAt e updatedAt (opcional)
+    modelName: "User",
+    tableName: "users",
+    timestamps: true,
   }
 );
 
-UserModel.beforeCreate(async (user: UserModel) => {
+// Middleware para hash de senha antes de salvar no banco
+UserModel.beforeCreate(async (user) => {
   await user.hashPassword();
 });
 
-UserModel.beforeUpdate(async (user: UserModel) => {
+UserModel.beforeUpdate(async (user) => {
   if (user.changed("password")) {
-    await user.hashPassword(); // Criptografa a senha antes de salvar
+    await user.hashPassword();
   }
 });
 
