@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
-import "../styles/Login.css";
+import "../styles/Login.css"; // Pode compartilhar o mesmo CSS do login
 
-const Login = () => {
+const Cadastro = () => {
   const navigate = useNavigate();
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email && password) {
-      console.log("Login bem-sucedido!");
-      navigate("/home");
+  const handleCadastro = () => {
+    if (nome && email && password) {
+      console.log("Cadastro realizado!");
+      navigate("/home"); // Após cadastro, redireciona para Home
     } else {
       alert("Preencha todos os campos!");
     }
@@ -20,9 +21,17 @@ const Login = () => {
   return (
     <div className="login-container">
       <Typography variant="h2" className="logo">
-        GAMBYFLIX
+        CADASTRO
       </Typography>
       <Box className="login-box">
+        <TextField
+          fullWidth
+          variant="filled"
+          label="Nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          className="input-field"
+        />
         <TextField
           fullWidth
           variant="filled"
@@ -34,7 +43,7 @@ const Login = () => {
         <TextField
           fullWidth
           variant="filled"
-          label="Password"
+          label="Senha"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -43,23 +52,17 @@ const Login = () => {
         <Button
           fullWidth
           variant="contained"
-          color="error"
-          onClick={handleLogin}
+          color="success"
+          onClick={handleCadastro}
         >
-          Sign In
+          Cadastrar
         </Button>
-        <Typography className="register-text">
-          NÃO É MEMBRO?{" "}
-          <span className="link" onClick={() => navigate("/cadastro")}>
-            FAÇA TESTE GRÁTIS POR UM MÊS
-          </span>
-        </Typography>
         <Typography className="forgot-text">
-          <a href="#">ESQUECI MINHA SENHA</a>
+          <a href="/login">Já tem uma conta? Faça login</a>
         </Typography>
       </Box>
     </div>
   );
 };
 
-export default Login;
+export default Cadastro;

@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.post("/users", createUser);
 router.get("/users", getAll);
-router.get("/users/:id", authMiddleware, getUserByid);
-router.put("/users/:id", authMiddleware, updateUser);
-router.delete("/users/:id", authMiddleware, destroyUserByid);
+router.get("/users/:id", getUserByid);
+router.put("/users/:id", updateUser);
+router.delete("/users/:id", destroyUserByid);
 
 export default router;

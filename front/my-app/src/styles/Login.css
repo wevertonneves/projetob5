@@ -68,3 +68,12 @@ button {
 .forgot-text a:hover {
   text-decoration: underline;
 }
+.link {
+  color: red;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
