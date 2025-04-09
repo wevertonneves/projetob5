@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
-import bookRoutes from "./routes/bookRoutes";
+import FilmesRoutes from "./routes/FilmesRoutes";
 import collectionRoutes from "./routes/collectionRoutes";
 import loginRoutes from "./routes/loginRoutes";
 
@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 // Rotas
 app.use(userRoutes);
-app.use(bookRoutes);
+app.use(FilmesRoutes);
 app.use(collectionRoutes);
 app.use(loginRoutes);
 

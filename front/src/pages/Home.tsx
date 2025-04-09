@@ -9,26 +9,37 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Alterado para usar navigate
 import "../styles/Home.css";
 
-interface Movie {
+interface Genre {
   id: number;
-  title: string;
+  name: string;
   image: string;
 }
 
 const Home = () => {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setMovies([
-      { id: 1, title: "Filme 1", image: "https://via.placeholder.com/200" },
-      { id: 2, title: "Filme 2", image: "https://via.placeholder.com/200" },
-      { id: 3, title: "Filme 3", image: "https://via.placeholder.com/200" },
-      { id: 4, title: "Filme 4", image: "https://via.placeholder.com/200" },
+    setGenres([
+      { id: 1, name: "Ação", image: "https://via.placeholder.com/200" },
+      { id: 2, name: "Comédia", image: "https://via.placeholder.com/200" },
+      { id: 3, name: "Terror", image: "https://via.placeholder.com/200" },
+      { id: 4, name: "Drama", image: "https://via.placeholder.com/200" },
+      {
+        id: 5,
+        name: "Ficção Científica",
+        image: "https://via.placeholder.com/200",
+      },
     ]);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove o token de autenticação
+    navigate("/login"); // Redireciona para a tela de login
+  };
 
   return (
     <div className="home-container">
@@ -38,50 +49,41 @@ const Home = () => {
           <Typography variant="h6" className="logo">
             Meu Netflix Clone
           </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleLogout} // Botão de sair
+            style={{ marginLeft: "auto" }}
+          >
+            Sair
+          </Button>
         </Toolbar>
       </AppBar>
 
       {/* Conteúdo principal */}
       <Box className="content">
         <Typography variant="h4" className="title">
-          Filmes Populares
+          Escolha um Gênero
         </Typography>
 
-        {/* Grid com os filmes */}
+        {/* Grid com os gêneros de filmes */}
         <Grid container spacing={2} justifyContent="center">
-          {movies.map((movie) => (
-            <Grid item key={movie.id} xs={12} sm={6} md={3}>
+          {genres.map((genre) => (
+            <Grid item key={genre.id} xs={12} sm={6} md={3}>
               <Card className="movie-card">
                 <CardMedia
                   component="img"
-                  image={movie.image}
-                  title={movie.title}
+                  image={genre.image}
+                  title={genre.name}
                   className="movie-image"
                 />
+                <Typography variant="h6" align="center">
+                  {genre.name}
+                </Typography>
               </Card>
             </Grid>
           ))}
         </Grid>
-      </Box>
-
-      {/* Botões de Login e Cadastro */}
-      <Box className="auth-buttons">
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/login"
-        >
-          Login
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          component={Link}
-          to="/register"
-        >
-          Cadastrar
-        </Button>
       </Box>
     </div>
   );

@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import AuthorModel from "./AuthorModels";
-import BookModel from "./BookModel";
+import BookModel from "./FilmeModel";
 
 class CollectionModel extends Model {
   id: number | undefined;
