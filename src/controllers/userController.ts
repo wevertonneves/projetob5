@@ -22,14 +22,40 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Campo Obrigatorio" });
+    // Validação do campo 'name'
+    if (!name) {
+      return res.status(400).json({ error: "Campo 'name' é obrigatório." });
+    }
+    if (name.length < 3) {
+      return res
+        .status(400)
+        .json({ error: "Campo 'name' deve ter pelo menos 3 caracteres." });
     }
 
+    // Validação do campo 'email'
+    if (!email) {
+      return res.status(400).json({ error: "Campo 'email' é obrigatório." });
+    }
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Email inválido." });
+    }
+
+    // Validação do campo 'password'
+    if (!password) {
+      return res.status(400).json({ error: "Campo 'password' é obrigatório." });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "A senha deve ter pelo menos 6 caracteres." });
+    }
+
+    // Criação do usuário
     const user = await UserModel.create({ name, email, password });
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json("Erro Interno no servidor" + error);
+    res.status(500).json({ error: "Erro Interno no servidor", message: error });
   }
 };
 
@@ -39,23 +65,46 @@ export const updateUser = async (
   res: Response
 ) => {
   try {
-    const { name } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || name === "") {
-      return res.status(400).json({ error: "Nome Obrigatorio" });
+    // Validação do campo 'name'
+    if (name && name.length < 3) {
+      return res
+        .status(400)
+        .json({ error: "Campo 'name' deve ter pelo menos 3 caracteres." });
     }
 
+    // Validação do campo 'email'
+    if (email) {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Email inválido." });
+      }
+    }
+
+    // Validação do campo 'password'
+    if (password && password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "A senha deve ter pelo menos 6 caracteres." });
+    }
+
+    // Busca o usuário a ser atualizado
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "Usuario nao encontrado" });
+      return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    user.name = name;
+    // Atualiza os campos, se fornecidos
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = password;
 
+    // Salva as alterações
     await user.save();
-    res.status(201).json(user);
+    res.status(200).json(user);
   } catch (error) {
-    res.status(500).json("Erro Interno no servidor" + error);
+    res.status(500).json({ error: "Erro Interno no servidor", message: error });
   }
 };
 

@@ -7,12 +7,16 @@ import {
   destroyUserByid,
 } from "../controllers/userController";
 
+import { authMiddleware } from "../middleware/authMiddleware";
+
 const router = express.Router();
 
 // ROTAS DE LOGIN
-router.get("/users", getAll);
-router.get("/users/:id", getUserByid);
+//rota publica
 router.post("/users", createUser);
+
+router.get("/users", authMiddleware, getAll);
+router.get("/users/:id", getUserByid);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", destroyUserByid);
 
