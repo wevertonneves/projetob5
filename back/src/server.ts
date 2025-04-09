@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import FilmesRoutes from "./routes/FilmesRoutes";
-import collectionRoutes from "./routes/collectionRoutes";
+import GeneroRoutes from "./routes/GeneroRoutes";
 import loginRoutes from "./routes/loginRoutes";
 
 const app = express(); // 🔹 Instância do Express
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 // Rotas
 app.use(userRoutes);
 app.use(FilmesRoutes);
-app.use(collectionRoutes);
+app.use(GeneroRoutes);
 app.use(loginRoutes);
 
 export default app; // 🔹 Exporta o app para ser usado no index.ts
