@@ -1,26 +1,31 @@
-import express from "express"; // O nome correto é "express" (minúsculo)
+import express from "express";
 import sequelize from "./config/database";
 import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import collectionRoutes from "./routes/collectionRoutes";
 import loginRoutes from "./routes/loginRoutes";
+import cors from "cors";
 
-const app = express(); // Corrigido: "Express" para "express"
+const app = express(); // 🔹 Defina o app antes de usá-lo
 const port = 3000; // Define a porta do servidor
+
+app.use(cors({ origin: "http://localhost:5173" })); // 🔹 Agora está na posição correta
+app.use(express.json());
 
 // Rota principal
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-app.use(express.json());
+
+// Rotas
 app.use(userRoutes);
 app.use(bookRoutes);
 app.use(collectionRoutes);
 app.use(loginRoutes);
 
-// Sincroniza o banco de dados e só depois inicia o servidor
+// Sincroniza o banco de dados e inicia o servidor
 sequelize
-  .sync({ alter: true }) // Atualiza as tabelas conforme os modelos
+  .sync({ alter: true })
   .then(() => {
     console.log("Banco de dados sincronizado!");
     app.listen(port, () => {
@@ -28,5 +33,5 @@ sequelize
     });
   })
   .catch((err) => {
-    console.error("Erro ao sincronizar o banco de dados:", err);
+    console.error("Erro ao sincronizar o banco de dados:");
   });

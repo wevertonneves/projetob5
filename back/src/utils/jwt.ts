@@ -28,7 +28,6 @@ export const verifyToken = (
     };
     return decoded; // Retorna os dados do usuário decodificados se o token for válido
   } catch (error) {
-    console.error("❌ Erro ao verificar token:", error); // Log detalhado do erro
     return null; // Retorna null se o token for inválido ou expirado
   }
 };

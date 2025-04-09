@@ -1,19 +1,20 @@
-import { BrowserRouter, Routes, Route } from "react-router";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Pokedex from "./pages/Pokedex";
-import PokeInfo from "./pages/PokeInfo";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [data, setData] = useState<string>("");
+
+  useEffect(() => {
+    fetch("http://localhost:3000/") // 🔹 Ajuste para a rota correta do backend
+      .then((response) => response.text()) // 🔹 Se o backend retorna texto
+      .then((data) => setData(data))
+      .catch((error) => console.error("Erro ao buscar dados:", error));
+  }, []);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/pokedex" element={<Pokedex />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/Pokedex/:name" element={<PokeInfo />} />
-      </Routes>
-    </BrowserRouter>
+    <div>
+      <h1>Dados do Backend:</h1>
+      <p>{data}</p>
+    </div>
   );
 }
 
