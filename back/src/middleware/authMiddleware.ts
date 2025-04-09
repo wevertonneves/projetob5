@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../controllers/AuthController";
-// 🔹 Importação correta
 
 export const authMiddleware = (
   req: Request,
@@ -13,12 +12,12 @@ export const authMiddleware = (
   console.log("🟢 Token recebido:", token);
 
   if (!token) {
-    console.log("⛔ Nenhum token fornecido!");
-    return res.status(401).json({ error: "Acesso Negado" });
+    console.log("🔓 Nenhum token fornecido, permitindo acesso.");
+    return next(); // Permite o acesso sem autenticação
   }
 
   try {
-    const decoded = verifyToken(token); // 🔹 Usa a função correta agora
+    const decoded = verifyToken(token);
     console.log("✅ Token decodificado:", decoded);
 
     if (!decoded) {
@@ -26,10 +25,10 @@ export const authMiddleware = (
       return res.status(401).json({ error: "Token inválido" });
     }
 
-    (req as any).user = decoded; // 🔹 Adiciona o usuário decodificado à requisição
-    next();
+    (req as any).user = decoded; // Adiciona o usuário à requisição
   } catch (error) {
-    console.log("⛔ Erro ao verificar token:", error);
-    return res.status(401).json({ error: "Token inválido ou expirado" });
+    console.log("⛔ Erro ao verificar token, mas permitindo acesso:", error);
   }
+
+  next();
 };

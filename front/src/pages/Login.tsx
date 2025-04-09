@@ -1,19 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
+import axios from "axios"; // Adicione o Axios para fazer requisições HTTP
 import "../styles/Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    if (email && password) {
-      console.log("Login bem-sucedido!");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Preencha todos os campos!");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/login", {
+        email,
+        password,
+      });
+
+      // Se o login for bem-sucedido, armazenamos o token
+      localStorage.setItem("token", response.data.token);
       navigate("/home");
-    } else {
-      alert("Preencha todos os campos!");
+    } catch (err) {
+      setError("Credenciais inválidas!");
     }
   };
 
@@ -40,6 +53,7 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="input-field"
         />
+        {error && <Typography color="error">{error}</Typography>}
         <Button
           fullWidth
           variant="contained"
