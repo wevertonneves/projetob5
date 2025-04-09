@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Rota principal
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("aqui consegui acesso ao beck ende");
 });
 
 // Rotas
