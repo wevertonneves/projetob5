@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import "../styles/Pokedex.css";
+import { Link } from "react-router-dom";
 
 const Pokedex = () => {
   const [inputText, setInputText] = useState("");
@@ -29,26 +30,25 @@ const Pokedex = () => {
     }
   };
 
-  if (loading) {
-    return <div className="pokedex-container">Carregando...</div>;
-  }
-
   return (
     <div className="pokedex-container">
       <input
+        className="input"
         placeholder="Digite o nome do Pokémon"
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
       />
-      <button onClick={searchPokemon}>Buscar</button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button className="button" onClick={searchPokemon}>
+        Buscar
+      </button>
 
       {pokemon && (
-        <div>
-          <p>Nome: {pokemon.name}</p>
-          <p>Peso: {pokemon.weight}</p>
-          <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+        <div className="pokemon-info">
+          <p className="PokemonName">Nome: {pokemon.name}</p>
+          <Link to={`/pokedex/${pokemon.name}`} className="details-link">
+            Ver detalhes
+          </Link>
+          <img src={pokemon.sprites.front_default} className="image" />
         </div>
       )}
     </div>
