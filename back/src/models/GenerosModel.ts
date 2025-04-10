@@ -5,41 +5,43 @@ import FilmeModel from "./FilmeModel";
 class GeneroModel extends Model {
   id: number | undefined;
   name: string | undefined;
+  image: string | undefined; // 🔹 Adicionando campo para imagem
 }
 
-// Inicialização do modelo CollectionModel
 GeneroModel.init(
   {
     id: {
-      type: DataTypes.INTEGER, // Define o campo como um número inteiro
-      autoIncrement: true, // O valor será incrementado automaticamente
-      primaryKey: true, // Define como chave primária
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
     name: {
-      type: DataTypes.STRING, // Define o campo como string (texto)
-      allowNull: false, // Não permite valores nulos
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    image: {
+      type: DataTypes.STRING, // 🔹 Campo para armazenar a URL da imagem
+      allowNull: true, // Pode ser nulo caso não tenha imagem
     },
   },
   {
-    sequelize, // Usa a conexão com o banco de dados
-    modelName: "generoModel", // Nome do modelo no Sequelize
-    tableName: "genero", // Nome real da tabela no banco de dados
+    sequelize,
+    modelName: "generoModel",
+    tableName: "genero",
   }
 );
 
-// Definição do relacionamento muitos-para-muitos com AuthorModel
+// Relacionamento muitos-para-muitos com FilmeModel
 GeneroModel.belongsToMany(FilmeModel, {
-  through: "FilmeGenero", // Nome correto da tabela intermediária
+  through: "FilmeGenero",
   foreignKey: "generoId",
-  as: "books",
+  as: "filmes",
 });
 
 FilmeModel.belongsToMany(GeneroModel, {
   through: "FilmeGenero",
   foreignKey: "FilmesId",
-  as: "collections",
+  as: "generos",
 });
-
-// AuthorModel.hasMany(CollectionModel); // Isso não faz sentido em um relacionamento muitos-para-muitos
 
 export default GeneroModel;

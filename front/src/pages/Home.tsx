@@ -9,7 +9,8 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Alterado para usar navigate
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Importa Axios para fazer requisições HTTP
 import "../styles/Home.css";
 
 interface Genre {
@@ -23,22 +24,21 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setGenres([
-      { id: 1, name: "Ação", image: "https://via.placeholder.com/200" },
-      { id: 2, name: "Comédia", image: "https://via.placeholder.com/200" },
-      { id: 3, name: "Terror", image: "https://via.placeholder.com/200" },
-      { id: 4, name: "Drama", image: "https://via.placeholder.com/200" },
-      {
-        id: 5,
-        name: "Ficção Científica",
-        image: "https://via.placeholder.com/200",
-      },
-    ]);
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/genero"); // Ajuste a URL para a do seu backend
+        setGenres(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar gêneros:", error);
+      }
+    };
+
+    fetchGenres();
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove o token de autenticação
-    navigate("/login"); // Redireciona para a tela de login
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
@@ -52,7 +52,7 @@ const Home = () => {
           <Button
             variant="contained"
             color="error"
-            onClick={handleLogout} // Botão de sair
+            onClick={handleLogout}
             style={{ marginLeft: "auto" }}
           >
             Sair
@@ -73,7 +73,7 @@ const Home = () => {
               <Card className="movie-card">
                 <CardMedia
                   component="img"
-                  image={genre.image}
+                  image={genre.image || "https://via.placeholder.com/200"} // Caso não tenha imagem
                   title={genre.name}
                   className="movie-image"
                 />
