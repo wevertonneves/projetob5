@@ -12,7 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-import "../styles/GeneroFilmes.css";
+import "../styles/GeneroFilmes.css"; // CSS externo
 
 interface Filme {
   id: number;
@@ -20,7 +20,7 @@ interface Filme {
   image: string;
   releaseYear: number;
   duration: number;
-  videoUrl: string; // Adicionando URL do vídeo
+  videoUrl?: string;
 }
 
 interface Genero {
@@ -33,6 +33,8 @@ const GeneroFilmes = () => {
   const [filmes, setFilmes] = useState<Filme[]>([]);
   const [genero, setGenero] = useState<Genero | null>(null);
   const [loading, setLoading] = useState(true);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoNome, setVideoNome] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,9 +44,16 @@ const GeneroFilmes = () => {
         setFilmes(response.data);
 
         const generoResponse = await axios.get(`http://localhost:3000/generos`);
+
+        console.log("Todos os gêneros:", generoResponse.data);
+        console.log("ID da URL:", id);
+
         const generoEncontrado = generoResponse.data.find(
-          (g: Genero) => g.id.toString() === id
+          (g: Genero) => g.id === parseInt(id || "")
         );
+
+        console.log("Gênero encontrado:", generoEncontrado);
+
         setGenero(generoEncontrado);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -56,11 +65,12 @@ const GeneroFilmes = () => {
     fetchDados();
   }, [id]);
 
-  const handlePlayMovie = (videoUrl: string) => {
-    if (videoUrl) {
-      window.open(videoUrl, "_blank");
+  const handleFilmeClick = (filme: Filme) => {
+    if (filme.videoUrl) {
+      setVideoUrl(filme.videoUrl);
+      setVideoNome(filme.name);
     } else {
-      alert("Vídeo não disponível para este filme.");
+      alert("Nenhum vídeo disponível para este filme.");
     }
   };
 
@@ -69,35 +79,53 @@ const GeneroFilmes = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">
-            {genero ? `Filmes de ${genero.name}` : "Filmes do Gênero"}
+            {genero
+              ? `Filmes de ${genero.name}`
+              : "Filmes de gênero desconhecido"}
           </Typography>
           <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => navigate("/home")}
             className="genero-filmes-back-button"
+            variant="contained"
+            onClick={() => navigate("/home")}
+            style={{ marginLeft: "auto" }}
           >
             Voltar
           </Button>
         </Toolbar>
       </AppBar>
 
-      <Box p={4} className="genero-filmes-content">
-        {loading ? (
+      {loading ? (
+        <Box mt={5}>
           <CircularProgress />
-        ) : (
-          <>
+        </Box>
+      ) : (
+        <Box mt={4} className="genero-filmes-grid">
+          <Box width="100%" maxWidth="1400px">
             <Typography variant="h4" gutterBottom>
-              {genero ? `Filmes do gênero ${genero.name}` : "Filmes"}
+              {genero
+                ? `Filmes do gênero ${genero.name}`
+                : "Filmes do gênero desconhecido"}
             </Typography>
-            <Grid container spacing={3} className="genero-filmes-grid">
+
+            {videoUrl && (
+              <Box my={4}>
+                <Typography variant="h6" gutterBottom>
+                  Reproduzindo: {videoNome}
+                </Typography>
+                <video width="100%" controls autoPlay>
+                  <source src={videoUrl} type="video/mp4" />
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </Box>
+            )}
+
+            <Grid container spacing={2}>
               {filmes.length > 0 ? (
                 filmes.map((filme) => (
-                  <Grid item key={filme.id} xs={12} sm={6} md={4} lg={3} xl={2}>
+                  <Grid item key={filme.id} xs={12} sm={6} md={3}>
                     <Card
                       className="genero-filmes-card"
-                      onClick={() => handlePlayMovie(filme.videoUrl)}
-                      style={{ cursor: "pointer" }}
+                      onClick={() => handleFilmeClick(filme)}
                     >
                       <CardMedia
                         component="img"
@@ -122,9 +150,9 @@ const GeneroFilmes = () => {
                 </Typography>
               )}
             </Grid>
-          </>
-        )}
-      </Box>
+          </Box>
+        </Box>
+      )}
     </div>
   );
 };
