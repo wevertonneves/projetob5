@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import GeneroFilmes from "./pages/GeneroFilmes";
 import AdminPanel from "./pages/AdminPanel";
+import EsqueciSenha from "./pages/EsqueciSenha";
 
 <Route path="/genero/:id" element={<GeneroFilmes />} />;
 
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/genero/:id" element={<GeneroFilmes />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/esqueci-senha" element={<EsqueciSenha />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

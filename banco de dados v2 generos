@@ -1,0 +1,170 @@
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+--
+-- Host: localhost    Database: netgamby
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.4.32-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `favoritos`
+--
+
+DROP TABLE IF EXISTS `favoritos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `favoritos` (
+  `userId` int(11) NOT NULL,
+  `filmeId` int(11) NOT NULL,
+  PRIMARY KEY (`userId`,`filmeId`),
+  UNIQUE KEY `favoritos_filmeId_userId_unique` (`userId`,`filmeId`),
+  KEY `filmeId` (`filmeId`),
+  CONSTRAINT `favoritos_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `favoritos_ibfk_2` FOREIGN KEY (`filmeId`) REFERENCES `filmes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `favoritos`
+--
+
+LOCK TABLES `favoritos` WRITE;
+/*!40000 ALTER TABLE `favoritos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `favoritos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `filmegenero`
+--
+
+DROP TABLE IF EXISTS `filmegenero`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `filmegenero` (
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `generoId` int(11) NOT NULL,
+  `filmeId` int(11) NOT NULL,
+  PRIMARY KEY (`generoId`,`filmeId`),
+  KEY `filmeId` (`filmeId`),
+  CONSTRAINT `filmegenero_ibfk_1` FOREIGN KEY (`generoId`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `filmegenero_ibfk_2` FOREIGN KEY (`filmeId`) REFERENCES `filmes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `filmegenero`
+--
+
+LOCK TABLES `filmegenero` WRITE;
+/*!40000 ALTER TABLE `filmegenero` DISABLE KEYS */;
+/*!40000 ALTER TABLE `filmegenero` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `filmes`
+--
+
+DROP TABLE IF EXISTS `filmes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `filmes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `releaseYear` int(11) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `videoUrl` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `filmes`
+--
+
+LOCK TABLES `filmes` WRITE;
+/*!40000 ALTER TABLE `filmes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `filmes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `generos`
+--
+
+DROP TABLE IF EXISTS `generos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `generos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `generos`
+--
+
+LOCK TABLES `generos` WRITE;
+/*!40000 ALTER TABLE `generos` DISABLE KEYS */;
+INSERT INTO `generos` VALUES (1,'AÇÃO','https://iptv4k.com.br/wp-content/uploads/2024/09/filmes-de-acao-1.png','2025-09-09 00:00:00','2025-09-09 00:00:00'),(2,'FICÇÃO','https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/09/22/625248205-7e34ad367a344977813830404797d056.jpg','2025-09-09 00:00:00','2025-09-09 00:00:00'),(3,'TERROR','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtjtnzMhEsXOK9tHLM-6gZaodyBT8on7v7hQ&s','2025-09-09 00:00:00','2025-09-09 00:00:00'),(4,'COMEDIA','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJMSzO4Bmtk4Mi5Yt40CkRVWr574-pBbFW7w&s','2025-09-09 00:00:00','2025-09-09 00:00:00'),(5,'ROMANCE','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-ilBRJ8LgUY30ibGodYfcGX5RqLMi0oghoQ&s','2025-09-09 00:00:00','2025-09-09 00:00:00'),(6,'DOCUMENTARIOS','https://fragafilms.com.br/wp-content/uploads/2021/04/WhatsApp-Image-2021-04-14-at-13.47.15-768x1024.jpeg','2025-09-09 00:00:00','2025-09-09 00:00:00');
+/*!40000 ALTER TABLE `generos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'netgamby'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-04-05 16:56:09

@@ -1,23 +1,36 @@
-/* 🔹 Garante que a página ocupe toda a tela */
+/* 🔹 Faz a página ocupar toda a tela e aplica a imagem de fundo */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #141414;
+  background: url("../static/fundologin.png") no-repeat center center fixed;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* 🔹 Faz o fundo ocupar toda a tela e centraliza tudo */
+/* 🔹 Camada escura transparente sobre a imagem */
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Ajuste a opacidade aqui */
+  z-index: -1;
+}
+
+/* 🔹 Estiliza o container do login */
 .login-container {
   width: 100vw;
-  height: 100vh;
+  height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* 🔹 Centraliza verticalmente */
+  justify-content: center;
+  position: relative;
 }
 
 /* 🔹 Estiliza o título "GAMBYFLIX" */
@@ -31,7 +44,8 @@ body {
 
 /* 🔹 Caixa do login */
 .login-box {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro translúcido */
+  backdrop-filter: blur(5px);
   padding: 40px;
   border-radius: 8px;
   width: 350px;
@@ -68,6 +82,7 @@ button {
 .forgot-text a:hover {
   text-decoration: underline;
 }
+
 .link {
   color: red;
   cursor: pointer;

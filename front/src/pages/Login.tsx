@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
-import axios from "axios"; // Adicione o Axios para fazer requisições HTTP
+import axios from "axios";
 import "../styles/Login.css";
 
 const Login = () => {
@@ -22,7 +22,6 @@ const Login = () => {
         password,
       });
 
-      // Se o login for bem-sucedido, armazenamos o token
       localStorage.setItem("token", response.data.token);
       navigate("/home");
     } catch (err) {
@@ -60,7 +59,7 @@ const Login = () => {
           color="error"
           onClick={handleLogin}
         >
-          Sign In
+          ENTRAR
         </Button>
         <Typography className="register-text">
           NÃO É MEMBRO?{" "}
@@ -69,7 +68,9 @@ const Login = () => {
           </span>
         </Typography>
         <Typography className="forgot-text">
-          <a href="#">ESQUECI MINHA SENHA</a>
+          <span className="link" onClick={() => navigate("/esqueci-senha")}>
+            ESQUECI MINHA SENHA
+          </span>
         </Typography>
       </Box>
     </div>

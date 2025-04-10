@@ -4,6 +4,7 @@ import {
   getUserByid,
   createUser,
   updateUser,
+  updatePassword ,
   destroyUserByid,
 } from "../controllers/userController";
 
@@ -16,5 +17,6 @@ router.get("/users", authMiddleware, getAll);
 router.get("/users/:id", getUserByid);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", destroyUserByid);
+router.post("/nova-senha", updatePassword);
 
 export default router;
