@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import BookModel from "../models/FilmeModel";
+import BookModel from "../models/FilmesModel";
 
 // Método para buscar todos os livros
 export const getAll = async (req: Request, res: Response) => {

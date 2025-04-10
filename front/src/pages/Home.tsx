@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Importa Axios para fazer requisições HTTP
+import axios from "axios";
 import "../styles/Home.css";
 
 interface Genre {
@@ -35,6 +35,10 @@ const Home = () => {
 
     fetchGenres();
   }, []);
+
+  const handleGenreClick = (genreId: number) => {
+    navigate(`/genero/${genreId}`); // Redireciona para a página do gênero
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -70,7 +74,11 @@ const Home = () => {
         <Grid container spacing={2} justifyContent="center">
           {genres.map((genre) => (
             <Grid item key={genre.id} xs={12} sm={6} md={3}>
-              <Card className="movie-card">
+              <Card
+                className="movie-card"
+                onClick={() => handleGenreClick(genre.id)}
+                style={{ cursor: "pointer" }} // 🔹 Torna o card clicável
+              >
                 <CardMedia
                   component="img"
                   image={genre.image || "https://via.placeholder.com/200"} // Caso não tenha imagem

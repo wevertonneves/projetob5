@@ -1,47 +1,37 @@
-import { DataTypes, Model } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
-import FilmeModel from "./FilmeModel";
 
-class GeneroModel extends Model {
-  id: number | undefined;
-  name: string | undefined;
-  image: string | undefined; // 🔹 Adicionando campo para imagem
-}
+class GenerosModel extends Model {}
 
-GeneroModel.init(
+GenerosModel.init(
   {
     id: {
       type: DataTypes.INTEGER,
-      autoIncrement: true,
       primaryKey: true,
+      autoIncrement: true,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     image: {
-      type: DataTypes.STRING, // 🔹 Campo para armazenar a URL da imagem
-      allowNull: true, // Pode ser nulo caso não tenha imagem
+      type: DataTypes.STRING,
     },
   },
   {
     sequelize,
-    modelName: "generoModel",
-    tableName: "genero",
+    modelName: "genero",
   }
 );
 
-// Relacionamento muitos-para-muitos com FilmeModel
-GeneroModel.belongsToMany(FilmeModel, {
-  through: "FilmeGenero",
-  foreignKey: "generoId",
+export default GenerosModel;
+
+// 🔹 IMPORTAR FilmeModel **APÓS** EXPORTAR GenerosModel
+import FilmesModel from "./FilmesModel";
+
+GenerosModel.belongsToMany(FilmesModel, {
+  through: "filmegenero",
   as: "filmes",
+  foreignKey: "generoId",
+  otherKey: "filmeId",
 });
-
-FilmeModel.belongsToMany(GeneroModel, {
-  through: "FilmeGenero",
-  foreignKey: "FilmesId",
-  as: "generos",
-});
-
-export default GeneroModel;
