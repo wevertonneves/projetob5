@@ -7,8 +7,7 @@ import Cadastro from "./pages/Cadastro";
 import GeneroFilmes from "./pages/GeneroFilmes";
 import AdminPanel from "./pages/AdminPanel";
 import EsqueciSenha from "./pages/EsqueciSenha";
-
-<Route path="/genero/:id" element={<GeneroFilmes />} />;
+import NovaSenha from "./pages/NovaSenha";
 
 import "./index.css";
 
@@ -23,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/genero/:id" element={<GeneroFilmes />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+        <Route path="/nova-senha" element={<NovaSenha />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -23,16 +23,16 @@ const AdminPanel = () => {
     duration: "",
     imageUrl: "",
     videoUrl: "",
-    genre: "", // Agora usamos um array para suportar múltiplos gêneros
+    genre: "",
   });
 
   const [filmes, setFilmes] = useState([]);
-  const [generos, setGeneros] = useState([]); // Novo estado para armazenar os gêneros
+  const [generos, setGeneros] = useState([]);
   const [selectedFilmeId, setSelectedFilmeId] = useState("");
 
   useEffect(() => {
     getAllFilmes();
-    getAllGeneros(); // Buscar os gêneros ao carregar a página
+    getAllGeneros();
   }, []);
 
   const handleChange = (e) => {
@@ -63,8 +63,8 @@ const AdminPanel = () => {
 
   const getAllGeneros = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/genero"); // Rota correta para buscar gêneros
-      setGeneros(res.data); // Salvar gêneros no estado
+      const res = await axios.get("http://localhost:3000/genero");
+      setGeneros(res.data);
     } catch (error) {
       console.error("Erro ao buscar gêneros:", error);
     }
@@ -91,7 +91,7 @@ const AdminPanel = () => {
         duration: movie.duration,
         imageUrl: movie.imageUrl,
         videoUrl: movie.videoUrl,
-        genres: [movie.genre], // Enviar o ID do gênero corretamente
+        genres: [movie.genre],
       });
 
       alert("Filme adicionado com sucesso!");
@@ -132,10 +132,6 @@ const AdminPanel = () => {
       </AppBar>
 
       <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Adicionar ou Remover Filmes
-        </Typography>
-
         <Box
           component="form"
           sx={{
@@ -148,6 +144,15 @@ const AdminPanel = () => {
             borderRadius: 2,
           }}
         >
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{ color: "white" }}
+          >
+            Adicionar e Remover Filmes
+          </Typography>
+
           <TextField
             label="Nome do Filme"
             name="name"
@@ -236,10 +241,8 @@ const AdminPanel = () => {
               sx={{ color: "white" }}
               MenuProps={{
                 PaperProps: {
-                  style: {
-                    backgroundColor: "#1e1e1e",
-                    color: "white",
-                  },
+                  backgroundColor: "#1e1e1e",
+                  color: "white",
                 },
               }}
             >

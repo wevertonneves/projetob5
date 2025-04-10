@@ -22,7 +22,12 @@ const Login = () => {
         password,
       });
 
-      localStorage.setItem("token", response.data.token);
+      const { token, user } = response.data;
+
+      // Salvando token e ID do usuário no localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", user.id); // <- ESSENCIAL!
+
       navigate("/home");
     } catch (err) {
       setError("Credenciais inválidas!");

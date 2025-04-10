@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../controllers/AuthController";
+import { verifyToken } from "../controllers/logincontroller";
 
 export const authMiddleware = (
   req: Request,

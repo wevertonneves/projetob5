@@ -7,7 +7,6 @@ import {
 } from "sequelize";
 import sequelize from "../config/database";
 
-// Tipagem correta para os atributos do model
 class FilmesModel extends Model<
   InferAttributes<FilmesModel>,
   InferCreationAttributes<FilmesModel>
@@ -19,7 +18,7 @@ class FilmesModel extends Model<
   declare image: string;
   declare videoUrl: string | null;
 
-  // ✅ Métodos do Sequelize para associação
+  // Tipagem para relacionamentos (se necessário)
   declare setGeneros: (generoIds: number[]) => Promise<void>;
 }
 
@@ -55,13 +54,3 @@ FilmesModel.init(
 );
 
 export default FilmesModel;
-
-// 🔹 IMPORTAÇÕES E ASSOCIAÇÕES
-import GenerosModel from "./GenerosModel";
-
-FilmesModel.belongsToMany(GenerosModel, {
-  through: "filmegenero", // nome da tabela intermediária
-  as: "generos",
-  foreignKey: "filmeId",
-  otherKey: "generoId",
-});

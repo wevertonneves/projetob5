@@ -1,6 +1,14 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import {
+  DataTypes,
+  Model,
+  Optional,
+  Association,
+  HasManyAddAssociationMixin,
+  HasManyRemoveAssociationMixin,
+} from "sequelize";
 import sequelize from "../config/database";
 import bcrypt from "bcrypt";
+import FilmesModel from "./FilmesModel"; // 👈 Importa o modelo de filmes
 
 // Interface para os atributos do usuário
 interface UserAttributes {
@@ -20,6 +28,7 @@ class UserModel extends Model<UserAttributes, UserCreationAttributes> {
   public email!: string;
   public password!: string;
 
+  // 🔐 Métodos personalizados
   public async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
   }
@@ -27,6 +36,15 @@ class UserModel extends Model<UserAttributes, UserCreationAttributes> {
   public async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
   }
+
+  // 📌 Associação com favoritos (filmes)
+  public favoritos?: FilmesModel[];
+  public addFavorito!: HasManyAddAssociationMixin<FilmesModel, number>;
+  public removeFavorito!: HasManyRemoveAssociationMixin<FilmesModel, number>;
+
+  public static associations: {
+    favoritos: Association<UserModel, FilmesModel>;
+  };
 }
 
 // Inicializa o modelo no Sequelize

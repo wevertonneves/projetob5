@@ -1,13 +1,13 @@
 import { Model, DataTypes, Association } from "sequelize";
 import sequelize from "../config/database";
-import FilmesModel from "./FilmesModel"; // 🔹 Importa aqui mesmo
+import FilmesModel from "./FilmesModel"; // Pode manter
 
 class GenerosModel extends Model {
   public id!: number;
   public name!: string;
   public image!: string;
 
-  // 🔹 Definição explícita da associação
+  // Apenas define a tipagem, sem fazer associação aqui
   public declare filmes?: FilmesModel[];
 
   public static associations: {
@@ -35,13 +35,5 @@ GenerosModel.init(
     modelName: "genero",
   }
 );
-
-// 🔹 Definição da associação muitos-para-muitos
-GenerosModel.belongsToMany(FilmesModel, {
-  through: "filmegenero",
-  as: "filmes",
-  foreignKey: "generoId",
-  otherKey: "filmeId",
-});
 
 export default GenerosModel;

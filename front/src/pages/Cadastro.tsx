@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Typography, Box, Snackbar, Alert } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import "../styles/Login.css";
 
 const Cadastro = () => {
@@ -9,7 +16,6 @@ const Cadastro = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Estados para os erros
   const [nomeError, setNomeError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
@@ -17,7 +23,6 @@ const Cadastro = () => {
   const [nomeLabel, setNomeLabel] = useState("Nome");
   const [passwordLabel, setPasswordLabel] = useState("Senha");
 
-  // Estado para a mensagem de sucesso
   const [successMessage, setSuccessMessage] = useState(false);
 
   const errorStyle = {
@@ -84,9 +89,14 @@ const Cadastro = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage(true); // Exibir a mensagem de sucesso
+        // ✅ Salva o userId (se retornado pelo backend)
+        if (data.id) {
+          localStorage.setItem("userId", data.id);
+        }
+
+        setSuccessMessage(true);
         setTimeout(() => {
-          navigate("/login"); // Redirecionar após um tempo
+          navigate("/login");
         }, 2000);
       } else {
         if (data.error === "Este email já está cadastrado.") {
@@ -116,9 +126,7 @@ const Cadastro = () => {
           onChange={(e) => setNome(e.target.value)}
           className="input-field"
           error={nomeError}
-          InputLabelProps={{
-            style: nomeError ? errorStyle : {},
-          }}
+          InputLabelProps={{ style: nomeError ? errorStyle : {} }}
         />
         <TextField
           fullWidth
@@ -128,9 +136,7 @@ const Cadastro = () => {
           onChange={(e) => setEmail(e.target.value)}
           className="input-field"
           error={emailError}
-          InputLabelProps={{
-            style: emailError ? errorStyle : {},
-          }}
+          InputLabelProps={{ style: emailError ? errorStyle : {} }}
         />
         <TextField
           fullWidth
@@ -141,9 +147,7 @@ const Cadastro = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="input-field"
           error={passwordError}
-          InputLabelProps={{
-            style: passwordError ? errorStyle : {},
-          }}
+          InputLabelProps={{ style: passwordError ? errorStyle : {} }}
         />
         <Button
           fullWidth
@@ -158,14 +162,18 @@ const Cadastro = () => {
         </Typography>
       </Box>
 
-      {/* Snackbar para exibir mensagem de sucesso */}
+      {/* Snackbar de sucesso */}
       <Snackbar
         open={successMessage}
         autoHideDuration={2000}
         onClose={() => setSuccessMessage(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={() => setSuccessMessage(false)} severity="success" variant="filled">
+        <Alert
+          onClose={() => setSuccessMessage(false)}
+          severity="success"
+          variant="filled"
+        >
           Cadastro realizado com sucesso! Voltando para tela de login
         </Alert>
       </Snackbar>

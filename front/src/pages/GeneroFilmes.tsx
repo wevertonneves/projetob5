@@ -10,9 +10,12 @@ import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import axios from "axios";
-import "../styles/GeneroFilmes.css"; // CSS externo
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import "../styles/GeneroFilmes.css";
 
 interface Filme {
   id: number;
@@ -35,28 +38,42 @@ const GeneroFilmes = () => {
   const [loading, setLoading] = useState(true);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoNome, setVideoNome] = useState<string | null>(null);
+  const [favoritos, setFavoritos] = useState<number[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDados = async () => {
+      const userId = localStorage.getItem("userId");
+
       try {
+        setLoading(true);
+
+        // Buscar filmes do gênero
         const response = await axios.get(`http://localhost:3000/genero/${id}`);
         setFilmes(response.data);
 
-        const generoResponse = await axios.get(`http://localhost:3000/generos`);
-
-        console.log("Todos os gêneros:", generoResponse.data);
-        console.log("ID da URL:", id);
-
+        // Buscar nome do gênero
+        const generoResponse = await axios.get(`http://localhost:3000/genero`);
         const generoEncontrado = generoResponse.data.find(
           (g: Genero) => g.id === parseInt(id || "")
         );
-
-        console.log("Gênero encontrado:", generoEncontrado);
-
         setGenero(generoEncontrado);
+
+        // Buscar favoritos do usuário (DEPOIS de carregar filmes)
+        if (userId) {
+          const favRes = await axios.get(
+            `http://localhost:3000/favoritos/${userId}`
+          );
+
+          const idsFavoritos = favRes.data
+            .map((f: any) => f.favorito?.filmeId)
+            .filter((id: number | undefined): id is number => id !== undefined);
+
+          console.log("📌 Filmes favoritos carregados:", idsFavoritos);
+          setFavoritos(idsFavoritos);
+        }
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error("❌ Erro ao buscar dados:", error);
       } finally {
         setLoading(false);
       }
@@ -74,6 +91,35 @@ const GeneroFilmes = () => {
     }
   };
 
+  const alternarFavorito = async (filmeId: number) => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      alert("Usuário não autenticado");
+      return;
+    }
+
+    const jaFavorito = favoritos.includes(filmeId);
+
+    try {
+      if (jaFavorito) {
+        await axios.post("http://localhost:3000/favoritos/remover", {
+          userId,
+          filmeId,
+        });
+        setFavoritos((prev) => prev.filter((id) => id !== filmeId));
+      } else {
+        await axios.post("http://localhost:3000/favoritos/adicionar", {
+          userId,
+          filmeId,
+        });
+        setFavoritos((prev) => [...prev, filmeId]);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao favoritar/desfavoritar:", error);
+    }
+  };
+
   return (
     <div className="genero-filmes-container">
       <AppBar position="static">
@@ -84,7 +130,6 @@ const GeneroFilmes = () => {
               : "Filmes de gênero desconhecido"}
           </Typography>
           <Button
-            className="genero-filmes-back-button"
             variant="contained"
             onClick={() => navigate("/home")}
             style={{ marginLeft: "auto" }}
@@ -123,23 +168,35 @@ const GeneroFilmes = () => {
               {filmes.length > 0 ? (
                 filmes.map((filme) => (
                   <Grid item key={filme.id} xs={12} sm={6} md={3}>
-                    <Card
-                      className="genero-filmes-card"
-                      onClick={() => handleFilmeClick(filme)}
-                    >
+                    <Card className="genero-filmes-card">
                       <CardMedia
                         component="img"
                         className="genero-filmes-image"
                         image={filme.image || "https://via.placeholder.com/300"}
                         alt={filme.name}
+                        onClick={() => handleFilmeClick(filme)}
                       />
-                      <Box className="genero-filmes-details">
-                        <Typography className="genero-filmes-name">
-                          {filme.name}
-                        </Typography>
-                        <Typography className="genero-filmes-info">
-                          {filme.releaseYear} • {filme.duration} min
-                        </Typography>
+                      <Box
+                        className="genero-filmes-details"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <Box>
+                          <Typography className="genero-filmes-name">
+                            {filme.name}
+                          </Typography>
+                          <Typography className="genero-filmes-info">
+                            {filme.releaseYear} • {filme.duration} min
+                          </Typography>
+                        </Box>
+                        <IconButton onClick={() => alternarFavorito(filme.id)}>
+                          {favoritos.includes(filme.id) ? (
+                            <FavoriteIcon color="error" />
+                          ) : (
+                            <FavoriteBorderIcon />
+                          )}
+                        </IconButton>
                       </Box>
                     </Card>
                   </Grid>
