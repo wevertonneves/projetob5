@@ -26,7 +26,7 @@ const Home = () => {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/genero"); // Ajuste a URL para a do seu backend
+        const response = await axios.get("http://localhost:3000/genero");
         setGenres(response.data);
       } catch (error) {
         console.error("Erro ao buscar gêneros:", error);
@@ -37,7 +37,7 @@ const Home = () => {
   }, []);
 
   const handleGenreClick = (genreId: number) => {
-    navigate(`/genero/${genreId}`); // Redireciona para a página do gênero
+    navigate(`/genero/${genreId}`);
   };
 
   const handleLogout = () => {
@@ -45,43 +45,49 @@ const Home = () => {
     navigate("/login");
   };
 
+  const handleAdminPanel = () => {
+    navigate("/admin");
+  };
+
   return (
     <div className="home-container">
-      {/* Navbar */}
       <AppBar position="static" className="navbar">
         <Toolbar>
           <Typography variant="h6" className="logo">
-            Meu Netflix Clone
+            GAMBY FLIX
           </Typography>
+
           <Button
             variant="contained"
-            color="error"
-            onClick={handleLogout}
-            style={{ marginLeft: "auto" }}
+            color="secondary"
+            onClick={handleAdminPanel}
+            style={{ marginLeft: "auto", marginRight: 10 }}
           >
+            Painel Administrativo
+          </Button>
+
+          <Button variant="contained" color="error" onClick={handleLogout}>
             Sair
           </Button>
         </Toolbar>
       </AppBar>
 
-      {/* Conteúdo principal */}
       <Box className="content">
         <Typography variant="h4" className="title">
           Escolha um Gênero
         </Typography>
 
-        {/* Grid com os gêneros de filmes */}
         <Grid container spacing={2} justifyContent="center">
           {genres.map((genre) => (
             <Grid item key={genre.id} xs={12} sm={6} md={3}>
               <Card
                 className="movie-card"
                 onClick={() => handleGenreClick(genre.id)}
-                style={{ cursor: "pointer" }} // 🔹 Torna o card clicável
+                style={{ cursor: "pointer" }}
               >
                 <CardMedia
                   component="img"
-                  image={genre.image || "https://via.placeholder.com/200"} // Caso não tenha imagem
+                  image={genre.image || "https://via.placeholder.com/200"}
                   title={genre.name}
                   className="movie-image"
                 />
