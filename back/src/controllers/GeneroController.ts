@@ -13,7 +13,12 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getFilmesPorGenero = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // 🔹 Converte o ID para número
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID de gênero inválido" });
+    }
+
     const genero = await GeneroModel.findByPk(id, {
       include: [
         {
@@ -28,7 +33,7 @@ export const getFilmesPorGenero = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Gênero não encontrado" });
     }
 
-    return res.json(genero.getDataValue("filmes"));
+    return res.json(genero.filmes); // 🔹 Mais limpo e seguro que getDataValue
   } catch (error) {
     console.error("Erro ao buscar filmes por gênero:", error);
     return res.status(500).json({ message: "Erro interno do servidor" });

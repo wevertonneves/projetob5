@@ -23,6 +23,10 @@ FilmesModel.init(
     image: {
       type: DataTypes.STRING,
     },
+    videoUrl: {
+      type: DataTypes.STRING,
+      allowNull: true, // 🔹 pode ser nulo
+    },
   },
   {
     sequelize,
