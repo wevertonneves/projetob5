@@ -53,6 +53,10 @@ const RecuperarSenha = () => {
 
       console.log("✅ Resposta do servidor:", response.data);
       setMessage(response.data.message);
+
+      // 🔐 Salva o email no localStorage para ser usado na próxima tela
+      localStorage.setItem("emailRecuperacao", email);
+
       navigate("/nova-senha");
     } catch (err) {
       console.error("❌ Erro na validação:");

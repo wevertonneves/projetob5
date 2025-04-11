@@ -4,13 +4,21 @@ import axios from "axios";
 import "../styles/styles.css";
 
 const NovaSenha = () => {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+
   useEffect(() => {
     document.body.classList.add("bg-nova-senha");
+
+    // Recupera o email salvo no localStorage
+    const emailSalvo = localStorage.getItem("emailRecuperacao");
+    if (emailSalvo) {
+      setEmail(emailSalvo);
+    }
+
     return () => {
       document.body.classList.remove("bg-nova-senha");
     };
@@ -26,6 +34,10 @@ const NovaSenha = () => {
       });
 
       setMensagem("Senha alterada com sucesso! Redirecionando...");
+
+      // Limpa o email salvo no localStorage
+      localStorage.removeItem("emailRecuperacao");
+
       setTimeout(() => navigate("/login"), 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -43,19 +55,6 @@ const NovaSenha = () => {
         <h2 className="logo">Redefinir Senha</h2>
 
         <form onSubmit={handleNovaSenha}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Digite seu email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-
           <div>
             <label htmlFor="senha">Nova Senha</label>
             <input
