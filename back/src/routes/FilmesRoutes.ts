@@ -15,7 +15,7 @@ router.get("/filmes", authMiddleware, getAll);
 router.get("/filmes/:id", authMiddleware, getFilmeById);
 router.delete("/filmes/:id", authMiddleware, deleteFilme);
 router.post("/filmes", authMiddleware, addFilme);
-router.put("/filmes/:id", updateFilme);
+router.put("/filmes/:id",authMiddleware, updateFilme);
 
 export default router;
 

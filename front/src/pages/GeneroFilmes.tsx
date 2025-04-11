@@ -115,9 +115,9 @@ const GeneroFilmes = () => {
         </Box>
       ) : (
         <Box maxWidth="1400px" mx="auto">
-          <Typography variant="h4" gutterBottom>
-            {genero ? `${genero.name}` : "Gênero não encontrado"}
-          </Typography>
+        <Typography variant="h4" gutterBottom sx={{ color: "white" }}>
+  {genero ? `${genero.name}` : "Gênero não encontrado"}
+</Typography>
 
           <Grid container spacing={2}>
             {filmes.length > 0 ? (

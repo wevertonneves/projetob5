@@ -1,25 +1,28 @@
 import { Request, Response } from "express";
 import GeneroModel from "../models/GenerosModel";
 import FilmeModel from "../models/FilmesModel";
+import { validateId } from "../validators/Validators";
 
-// 🔹 GET todos os gêneros
-export const getAll = async (req: Request, res: Response) => {
+
+const handleError = (res: Response, error: any, message: string) => {
+  console.error(message, error);
+  res.status(500).json({ message, error });
+};
+
+
+export const getAll = async (_req: Request, res: Response) => {
   try {
     const generos = await GeneroModel.findAll();
     res.json(generos);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar gêneros", error });
+    handleError(res, error, "Erro ao buscar gêneros");
   }
 };
 
-// 🔹 GET filmes por gênero
+
 export const getFilmesPorGenero = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ message: "ID de gênero inválido" });
-    }
+    const id = validateId(req.params.id);
 
     const genero = await GeneroModel.findByPk(id, {
       include: [
@@ -35,14 +38,13 @@ export const getFilmesPorGenero = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Gênero não encontrado" });
     }
 
-    return res.json(genero.filmes);
+    res.json(genero.filmes);
   } catch (error) {
-    console.error("Erro ao buscar filmes por gênero:", error);
-    return res.status(500).json({ message: "Erro interno do servidor" });
+    handleError(res, error, "Erro ao buscar filmes por gênero");
   }
 };
 
-// 🔹 POST criar novo gênero
+
 export const createGenero = async (req: Request, res: Response) => {
   try {
     const { name, image } = req.body;
@@ -52,30 +54,23 @@ export const createGenero = async (req: Request, res: Response) => {
     }
 
     if (image && typeof image !== "string") {
-      return res
-        .status(400)
-        .json({ message: "URL da imagem deve ser uma string" });
+      return res.status(400).json({ message: "A imagem deve ser uma URL válida" });
     }
 
     const novoGenero = await GeneroModel.create({ name, image });
-    return res.status(201).json(novoGenero);
+    res.status(201).json(novoGenero);
   } catch (error) {
-    console.error("Erro ao criar gênero:", error);
-    return res.status(500).json({ message: "Erro ao criar gênero", error });
+    handleError(res, error, "Erro ao criar gênero");
   }
 };
-// 🔹 PUT atualizar gênero
+
+
 export const updateGenero = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = validateId(req.params.id);
     const { name, image } = req.body;
 
-    if (isNaN(id)) {
-      return res.status(400).json({ message: "ID inválido" });
-    }
-
     const genero = await GeneroModel.findByPk(id);
-
     if (!genero) {
       return res.status(404).json({ message: "Gênero não encontrado" });
     }
@@ -86,41 +81,30 @@ export const updateGenero = async (req: Request, res: Response) => {
 
     genero.name = name;
 
-    // Atualiza imagem, se fornecida
-    if (typeof image === "string") {
+    if (image && typeof image === "string") {
       genero.image = image;
     }
 
     await genero.save();
-
-    return res
-      .status(200)
-      .json({ message: "Gênero atualizado com sucesso", genero });
+    res.status(200).json({ message: "Gênero atualizado com sucesso", genero });
   } catch (error) {
-    console.error("Erro ao atualizar gênero:", error);
-    return res.status(500).json({ message: "Erro ao atualizar gênero", error });
+    handleError(res, error, "Erro ao atualizar gênero");
   }
 };
 
-// 🔹 DELETE gênero por ID
+
 export const deleteGenero = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ message: "ID inválido" });
-    }
+    const id = validateId(req.params.id);
 
     const genero = await GeneroModel.findByPk(id);
-
     if (!genero) {
       return res.status(404).json({ message: "Gênero não encontrado" });
     }
 
     await genero.destroy();
-    return res.status(200).json({ message: "Gênero deletado com sucesso" });
+    res.status(200).json({ message: "Gênero deletado com sucesso" });
   } catch (error) {
-    console.error("Erro ao deletar gênero:", error);
-    return res.status(500).json({ message: "Erro ao deletar gênero", error });
+    handleError(res, error, "Erro ao deletar gênero");
   }
 };

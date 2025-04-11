@@ -1,96 +1,71 @@
 import { Request, Response } from "express";
+import { Op } from "sequelize";
 import FilmesModel from "../models/FilmesModel";
 import GenerosModel from "../models/GenerosModel";
-import { Op } from "sequelize";
+import { validateFilmeId } from "../validators/Validators";
+
+
+const filmeAttributes = [
+  "id",
+  "name",
+  "releaseYear",
+  "duration",
+  "image",
+  "videoUrl",
+  "sinopse",
+];
+
+const generoInclude = {
+  model: GenerosModel,
+  as: "generos",
+  attributes: ["id", "name"],
+  through: { attributes: [] }, 
+};
+
+
+const handleError = (res: Response, error: any, message = "Erro interno") => {
+  console.error(message, error);
+  res.status(500).json({ error: message });
+};
+
 
 export const getFilmesByGenero = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "ID inválido" });
-    }
+    const id = validateFilmeId(req.params.id);
 
     const filmes = await FilmesModel.findAll({
-      include: [
-        {
-          model: GenerosModel,
-          as: "generos",
-          where: { id },
-          attributes: ["id", "name"],
-        },
-      ],
-      attributes: [
-        "id",
-        "name",
-        "releaseYear",
-        "duration",
-        "image",
-        "videoUrl",
-        "sinopse", // adicionado
-      ],
+      include: [{ ...generoInclude, where: { id } }],
+      attributes: filmeAttributes,
     });
 
     res.json(filmes);
   } catch (error) {
-    console.error("Erro ao buscar filmes do gênero:", error);
-    res.status(500).json({ error: "Erro ao buscar filmes do gênero" });
+    handleError(res, error, "Erro ao buscar filmes do gênero");
   }
 };
 
-export const getAll = async (req: Request, res: Response) => {
+
+export const getAll = async (_req: Request, res: Response) => {
   try {
     const filmes = await FilmesModel.findAll({
-      include: [
-        {
-          model: GenerosModel,
-          as: "generos",
-          attributes: ["id", "name"],
-          through: { attributes: [] },
-        },
-      ],
-      attributes: [
-        "id",
-        "name",
-        "releaseYear",
-        "duration",
-        "image",
-        "videoUrl",
-        "sinopse", // adicionado
-      ],
+      include: [generoInclude],
+      attributes: filmeAttributes,
     });
+
     res.json(filmes);
   } catch (error) {
-    console.error("Erro ao buscar todos os filmes:", error);
-    res.status(500).json({ error: "Erro ao buscar filmes" });
+    handleError(res, error, "Erro ao buscar filmes");
   }
 };
+
 
 export const getFilmeById = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "ID inválido" });
-    }
+    const id = validateFilmeId(req.params.id);
 
     const filme = await FilmesModel.findByPk(id, {
-      include: [
-        {
-          model: GenerosModel,
-          as: "generos",
-          attributes: ["id", "name"],
-        },
-      ],
-      attributes: [
-        "id",
-        "name",
-        "releaseYear",
-        "duration",
-        "image",
-        "videoUrl",
-        "sinopse", // adicionado
-      ],
+      include: [generoInclude],
+      attributes: filmeAttributes,
     });
 
     if (!filme) {
@@ -99,51 +74,34 @@ export const getFilmeById = async (req: Request, res: Response) => {
 
     res.json(filme);
   } catch (error) {
-    console.error("Erro ao buscar filme por ID:", error);
-    res.status(500).json({ error: "Erro ao buscar filme por ID" });
+    handleError(res, error, "Erro ao buscar filme por ID");
   }
 };
 
+
 export const deleteFilme = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "ID inválido" });
-    }
+    const id = validateFilmeId(req.params.id);
 
     const filme = await FilmesModel.findByPk(id);
-
     if (!filme) {
       return res.status(404).json({ error: "Filme não encontrado" });
     }
 
     await filme.destroy();
-
     res.json({ message: "Filme deletado com sucesso" });
   } catch (error) {
-    console.error("Erro ao deletar filme:", error);
-    res.status(500).json({ error: "Erro ao deletar filme" });
+    handleError(res, error, "Erro ao deletar filme");
   }
 };
+
 
 export const addFilme = async (req: Request, res: Response) => {
   try {
     const { name, year, duration, imageUrl, videoUrl, sinopse, genres } = req.body;
 
-    if (
-      !name ||
-      !year ||
-      !duration ||
-      !imageUrl ||
-      !videoUrl ||
-      !sinopse ||
-      !genres ||
-      genres.length === 0
-    ) {
-      return res.status(400).json({
-        error: "Todos os campos são obrigatórios, incluindo o(s) gênero(s) e a sinopse.",
-      });
+    if (!name || !year || !duration || !imageUrl || !videoUrl || !sinopse || !Array.isArray(genres) || genres.length === 0) {
+      return res.status(400).json({ error: "Todos os campos e gêneros são obrigatórios" });
     }
 
     const novoFilme = await FilmesModel.create({
@@ -159,37 +117,21 @@ export const addFilme = async (req: Request, res: Response) => {
 
     res.status(201).json(novoFilme);
   } catch (error) {
-    console.error("Erro ao adicionar filme:", error);
-    res.status(500).json({ error: "Erro ao adicionar filme." });
+    handleError(res, error, "Erro ao adicionar filme");
   }
 };
 
+
 export const updateFilme = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = validateFilmeId(req.params.id);
     const { name, year, duration, imageUrl, videoUrl, sinopse, genres } = req.body;
 
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "ID inválido" });
-    }
-
-    if (
-      !name ||
-      !year ||
-      !duration ||
-      !imageUrl ||
-      !videoUrl ||
-      !sinopse ||
-      !genres ||
-      genres.length === 0
-    ) {
-      return res.status(400).json({
-        error: "Todos os campos são obrigatórios, incluindo o(s) gênero(s) e a sinopse.",
-      });
+    if (!name || !year || !duration || !imageUrl || !videoUrl || !sinopse || !Array.isArray(genres) || genres.length === 0) {
+      return res.status(400).json({ error: "Todos os campos e gêneros são obrigatórios" });
     }
 
     const filme = await FilmesModel.findByPk(id);
-
     if (!filme) {
       return res.status(404).json({ error: "Filme não encontrado" });
     }
@@ -207,10 +149,10 @@ export const updateFilme = async (req: Request, res: Response) => {
 
     res.json({ message: "Filme atualizado com sucesso", filme });
   } catch (error) {
-    console.error("Erro ao atualizar filme:", error);
-    res.status(500).json({ error: "Erro ao atualizar filme." });
+    handleError(res, error, "Erro ao atualizar filme");
   }
 };
+
 
 export const searchFilmeByName = async (req: Request, res: Response) => {
   try {
@@ -222,27 +164,10 @@ export const searchFilmeByName = async (req: Request, res: Response) => {
 
     const filme = await FilmesModel.findOne({
       where: {
-        name: {
-          [Op.like]: `%${nome}%`, // ✅ Funciona com MySQL
-         // ou [Op.like] se não estiver usando PostgreSQL
-        },
+        name: { [Op.like]: `%${nome}%` },
       },
-      include: [
-        {
-          model: GenerosModel,
-          as: "generos",
-          attributes: ["id", "name"],
-        },
-      ],
-      attributes: [
-        "id",
-        "name",
-        "releaseYear",
-        "duration",
-        "image",
-        "videoUrl",
-        "sinopse",
-      ],
+      include: [generoInclude],
+      attributes: filmeAttributes,
     });
 
     if (!filme) {
@@ -251,7 +176,6 @@ export const searchFilmeByName = async (req: Request, res: Response) => {
 
     res.json(filme);
   } catch (error) {
-    console.error("Erro ao buscar filme por nome:", error);
-    res.status(500).json({ error: "Erro ao buscar filme por nome" });
+    handleError(res, error, "Erro ao buscar filme por nome");
   }
 };

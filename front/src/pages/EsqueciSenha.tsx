@@ -67,9 +67,17 @@ const RecuperarSenha = () => {
   return (
     <div className="login-container">
       <Box className="login-box">
-        <Typography variant="h4" className="logo">
-          Recuperar Senha
-        </Typography>
+      <Typography
+  variant="h4"
+  className="logo"
+  sx={{
+    color: "white",
+    fontFamily: "'Bebas Neue', sans-serif",
+    letterSpacing: 1,
+  }}
+>
+  Recuperar Senha
+</Typography>
 
         {step === 1 ? (
           <>

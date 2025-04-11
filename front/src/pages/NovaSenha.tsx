@@ -1,59 +1,60 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../styles/styles.css";
 
 const NovaSenha = () => {
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [emailRecuperacao, setEmailRecuperacao] = useState("");
 
   useEffect(() => {
-    document.body.classList.add("bg-nova-senha");
-
     const emailSalvo = localStorage.getItem("emailRecuperacao");
     if (emailSalvo) {
-      setEmail(emailSalvo);
+      setEmailRecuperacao(emailSalvo);
+    } else {
+      setMensagem("Email não encontrado. Tente recuperar a senha novamente.");
     }
-
-    return () => {
-      document.body.classList.remove("bg-nova-senha");
-    };
+    document.getElementById("senha")?.focus();
   }, []);
 
   const handleNovaSenha = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!emailRecuperacao || !password) {
+      setMensagem("Preencha todos os campos.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setMensagem("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:3000/nova-senha", {
-        email,
+      const response = await axios.post("http://localhost:3000/nova-senha", {
+        email: emailRecuperacao,
         password,
       });
 
-      setMensagem("Senha alterada com sucesso! Redirecionando...");
-      localStorage.removeItem("emailRecuperacao");
-
+      setMensagem(response.data.message);
       setTimeout(() => navigate("/login"), 2000);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.error("Erro da API:", error.response?.data || error.message);
-      } else {
-        console.error("Erro inesperado:", error);
-      }
-      setMensagem("Erro ao alterar senha. Tente novamente.");
+    } catch (error: any) {
+      setMensagem(error.response?.data?.error || "Erro ao atualizar senha.");
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="background-overlay" />
-      <div className="login-box">
-        <h2 className="logo">Redefinir Senha</h2>
+    <div className="bg-nova-senha">
+      <div className="login-container">
+        <div className="form-container">
+          <h2 className="titulo-redefinir">Redefinir Senha</h2>
 
-        <form onSubmit={handleNovaSenha}>
-          <div>
-            <label htmlFor="senha">Nova Senha</label>
+          <form onSubmit={handleNovaSenha}>
+            <label htmlFor="senha" className="label-senha">
+              Nova senha:
+            </label>
             <input
               id="senha"
               type="password"
@@ -63,22 +64,14 @@ const NovaSenha = () => {
               required
               className="input-field"
             />
-          </div>
 
-          <button type="submit" className="auth-button">
-            Alterar Senha
-          </button>
-        </form>
+            <button type="submit" className="btn-enviar">
+              Enviar nova senha
+            </button>
+          </form>
 
-        {mensagem && (
-          <p
-            className={`mensagem ${
-              mensagem.includes("sucesso") ? "success" : "error"
-            }`}
-          >
-            {mensagem}
-          </p>
-        )}
+          {mensagem && <p className="mensagem">{mensagem}</p>}
+        </div>
       </div>
     </div>
   );

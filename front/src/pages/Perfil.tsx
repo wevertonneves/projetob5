@@ -2,6 +2,7 @@ import { Box, Typography, TextField, Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { isValidPassword } from "../validators/validations";
 
 const Perfil = () => {
   const [user, setUser] = useState<{
@@ -10,35 +11,35 @@ const Perfil = () => {
     email: string;
     cpf?: string;
   } | null>(null);
+
   const [novaSenha, setNovaSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [erroSenha, setErroSenha] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
     if (!userId || !token) {
-      console.warn("⚠️ ID de usuário ou token não encontrado no localStorage.");
       navigate("/login");
       return;
     }
 
     axios
       .get(`http://localhost:3000/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        console.log("📥 Usuário carregado:", res.data);
-        setUser(res.data);
-      })
+      .then((res) => setUser(res.data))
       .catch((err) => {
-        console.error("❌ Erro ao buscar dados do usuário:", err);
-        if (err.response?.status === 401) {
-          navigate("/login");
-        }
+        if (err.response?.status === 401) navigate("/login");
       });
   }, [navigate]);
 
@@ -46,82 +47,65 @@ const Perfil = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    if (!user?.email || !novaSenha || !token) {
-      console.warn("⚠️ Dados incompletos para trocar a senha.");
+    if (!user?.email || !novaSenha || !token) return;
+
+    if (!isValidPassword(novaSenha)) {
+      setErroSenha("A senha deve ter no mínimo 8 caracteres e conter letras e números.");
+      setMensagem("");
       return;
     }
 
     try {
       await axios.post(
         "http://localhost:3000/nova-senha",
-        {
-          email: user.email,
-          password: novaSenha,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { email: user.email, password: novaSenha },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("✅ Senha atualizada com sucesso.");
       setMensagem("Senha atualizada com sucesso!");
+      setErroSenha("");
       setNovaSenha("");
-    } catch (error) {
-      console.error("❌ Erro ao atualizar senha:", error);
+    } catch {
       setMensagem("Erro ao atualizar senha. Tente novamente.");
+      setErroSenha("");
     }
   };
 
   const handleDeletarUsuario = async () => {
     const token = localStorage.getItem("token");
-
     if (!user?.id || !token) return;
 
     const senha = window.prompt("Digite sua senha para confirmar:");
-
     if (!senha) {
       setMensagem("Operação cancelada.");
       return;
     }
 
     try {
-      // Verificar senha com backend
       const res = await axios.post(
         "http://localhost:3000/verificar-senha",
-        {
-          email: user.email,
-          password: senha,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { email: user.email, password: senha },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.data.valido) {
-        const confirmacao = window.confirm("Tem certeza que deseja excluir sua conta?");
-        if (!confirmacao) {
-          setMensagem("Exclusão cancelada.");
-          return;
-        }
-
-        await axios.delete(`http://localhost:3000/users/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log("🗑️ Usuário deletado com sucesso.");
-        localStorage.clear();
-        navigate("/login");
-      } else {
+      if (!res.data.valido) {
         setMensagem("Senha incorreta.");
+        return;
       }
-    } catch (err) {
-      console.error("❌ Erro ao verificar senha:", err);
+
+      const confirmacao = window.confirm("Tem certeza que deseja excluir sua conta?");
+      if (!confirmacao) {
+        setMensagem("Exclusão cancelada.");
+        return;
+      }
+
+      await axios.delete(`http://localhost:3000/users/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      localStorage.clear();
+      navigate("/login");
+    } catch {
       setMensagem("Erro ao verificar senha.");
     }
   };
@@ -135,10 +119,11 @@ const Perfil = () => {
     <Box className="bg-perfil">
       <Box className="background-overlay" />
       <Box className="login-container">
-        <Box className="login-box">
+        <Box className="login-box" sx={{ color: "white" }}>
           <Typography variant="h4" mb={2}>
             Perfil do Usuário
           </Typography>
+
           {user ? (
             <>
               <Typography variant="body1">
@@ -160,8 +145,18 @@ const Perfil = () => {
                   fullWidth
                   value={novaSenha}
                   onChange={(e) => setNovaSenha(e.target.value)}
-                  className="input-field"
-                  sx={{ mb: 2 }}
+                  error={!!erroSenha}
+                  helperText={erroSenha}
+                  sx={{
+                    mb: 2,
+                    input: { color: "white" },
+                    label: { color: "white" },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "white" },
+                      "&:hover fieldset": { borderColor: "white" },
+                      "&.Mui-focused fieldset": { borderColor: "white" },
+                    },
+                  }}
                 />
                 <Button variant="contained" color="primary" type="submit">
                   Atualizar Senha
@@ -180,7 +175,9 @@ const Perfil = () => {
               {mensagem && (
                 <Typography
                   mt={2}
-                  color={mensagem.includes("sucesso") ? "green" : "error"}
+                  sx={{
+                    color: mensagem.toLowerCase().includes("sucesso") ? "lightgreen" : "red",
+                  }}
                 >
                   {mensagem}
                 </Typography>

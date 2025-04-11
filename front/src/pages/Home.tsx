@@ -47,9 +47,9 @@ const Home = () => {
 
   return (
     <Box className="content">
-      <Typography variant="h4" className="title">
-        Escolha um Gênero
-      </Typography>
+      <Typography variant="h4" className="title" sx={{ color: "white" }}>
+  Escolha um Gênero
+</Typography>
 
       <Grid container spacing={2} justifyContent="center">
         {genres.map((genre) => (
@@ -65,9 +65,10 @@ const Home = () => {
                 title={genre.name}
                 className="movie-image"
               />
-              <Typography variant="h6" align="center">
-                {genre.name}
-              </Typography>
+             <Typography variant="h6" align="center" sx={{ color: 'white' }}>
+  {genre.name}
+</Typography>
+
             </Card>
           </Grid>
         ))}

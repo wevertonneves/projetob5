@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import UserModel from "../models/UserModel";
 import FilmesModel from "../models/FilmesModel";
 
-// 🔹 Adiciona um filme aos favoritos do usuário
+
 export const adicionarFavorito = async (req: Request, res: Response) => {
   const { userId, filmeId } = req.body;
 
@@ -16,7 +16,7 @@ export const adicionarFavorito = async (req: Request, res: Response) => {
         .json({ error: "Usuário ou filme não encontrado!" });
     }
 
-    await usuario.addFavorito(filme); // ✅ Método correto
+    await usuario.addFavorito(filme); 
     res.status(200).json({ message: "Filme adicionado aos favoritos!" });
   } catch (error) {
     console.error("Erro ao adicionar favorito:", error);
@@ -24,7 +24,7 @@ export const adicionarFavorito = async (req: Request, res: Response) => {
   }
 };
 
-// 🔹 Remove um filme dos favoritos do usuário
+
 export const removerFavorito = async (req: Request, res: Response) => {
   const { userId, filmeId } = req.body;
 
@@ -38,7 +38,7 @@ export const removerFavorito = async (req: Request, res: Response) => {
         .json({ error: "Usuário ou filme não encontrado!" });
     }
 
-    await usuario.removeFavorito(filme); // ✅ Método correto
+    await usuario.removeFavorito(filme); 
     res.status(200).json({ message: "Filme removido dos favoritos!" });
   } catch (error) {
     console.error("Erro ao remover favorito:", error);
@@ -46,7 +46,7 @@ export const removerFavorito = async (req: Request, res: Response) => {
   }
 };
 
-// 🔹 Lista todos os favoritos de um usuário
+
 export const listarFavoritos = async (req: Request, res: Response) => {
   const { userId } = req.params;
 

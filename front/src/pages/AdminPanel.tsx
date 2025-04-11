@@ -1,3 +1,4 @@
+// AdminPanel.tsx
 import {
   Typography,
   Button,
@@ -13,38 +14,27 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/styles.css";
 
+const initialMovie = {
+  name: "",
+  year: "",
+  duration: "",
+  imageUrl: "",
+  videoUrl: "",
+  genre: "",
+  sinopse: "",
+};
+
+const initialGenero = { name: "", image: "" };
+
 const AdminPanel = () => {
-  const [movie, setMovie] = useState({
-    name: "",
-    year: "",
-    duration: "",
-    imageUrl: "",
-    videoUrl: "",
-    genre: "",
-    sinopse: "",
-  });
-
-  const [updateMovie, setUpdateMovie] = useState({
-    id: "",
-    name: "",
-    year: "",
-    duration: "",
-    imageUrl: "",
-    videoUrl: "",
-    genre: "",
-    sinopse: "",
-  });
-
+  const [movie, setMovie] = useState(initialMovie);
+  const [updateMovie, setUpdateMovie] = useState({ ...initialMovie, id: "" });
   const [filmes, setFilmes] = useState<any[]>([]);
   const [generos, setGeneros] = useState<any[]>([]);
   const [selectedFilmeId, setSelectedFilmeId] = useState("");
   const [selectedGeneroId, setSelectedGeneroId] = useState("");
-  const [newGenero, setNewGenero] = useState({ name: "", image: "" });
-  const [updateGenero, setUpdateGenero] = useState({
-    id: "",
-    name: "",
-    image: "",
-  });
+  const [newGenero, setNewGenero] = useState(initialGenero);
+  const [updateGenero, setUpdateGenero] = useState({ ...initialGenero, id: "" });
 
   useEffect(() => {
     getAllFilmes();
@@ -53,83 +43,56 @@ const AdminPanel = () => {
 
   useEffect(() => {
     document.body.classList.add("bg-admin");
-    return () => {
-      document.body.classList.remove("bg-admin");
-    };
+    return () => document.body.classList.remove("bg-admin");
   }, []);
 
-  const handleChange = (e: any, stateSetter: any) => {
-    stateSetter((prev: any) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: any, setter: any) => {
+    setter((prev: any) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const getAllFilmes = async () => {
+  const getToken = () => localStorage.getItem("token");
+
+  const fetchData = async (url: string, setter: Function) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/filmes", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
-      setFilmes(res.data);
+      setter(res.data);
     } catch (error) {
-      console.error("Erro ao buscar filmes:", error);
+      console.error(`Erro ao buscar ${url.includes("filmes") ? "filmes" : "gêneros"}:`, error);
     }
   };
 
-  const getAllGeneros = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/genero", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setGeneros(res.data);
-    } catch (error) {
-      console.error("Erro ao buscar gêneros:", error);
-    }
+  const getAllFilmes = () => fetchData("http://localhost:3000/filmes", setFilmes);
+  const getAllGeneros = () => fetchData("http://localhost:3000/genero", setGeneros);
+
+  const sendData = async (method: string, url: string, data?: any) => {
+    return axios({
+      method,
+      url,
+      data,
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
   };
 
   const handleAddMovie = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:3000/filmes",
-        {
-          name: movie.name,
-          year: movie.year,
-          duration: movie.duration,
-          imageUrl: movie.imageUrl,
-          videoUrl: movie.videoUrl,
-          sinopse: movie.sinopse,
-          genres: [movie.genre],
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Filme adicionado com sucesso!");
-      setMovie({
-        name: "",
-        year: "",
-        duration: "",
-        imageUrl: "",
-        videoUrl: "",
-        genre: "",
-        sinopse: "",
+      await sendData("post", "http://localhost:3000/filmes", {
+        ...movie,
+        genres: [movie.genre],
       });
+      alert("Filme adicionado com sucesso!");
+      setMovie(initialMovie);
       getAllFilmes();
     } catch (error) {
       console.error("Erro ao adicionar filme:", error);
-      alert("Erro ao adicionar filme.");
     }
   };
 
   const handleDelete = async () => {
-    if (!selectedFilmeId) return;
-    if (!window.confirm("Tem certeza que deseja deletar este filme?")) return;
-
+    if (!selectedFilmeId || !window.confirm("Deseja deletar este filme?")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/filmes/${selectedFilmeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await sendData("delete", `http://localhost:3000/filmes/${selectedFilmeId}`);
       alert("Filme deletado com sucesso!");
       setSelectedFilmeId("");
       getAllFilmes();
@@ -139,100 +102,49 @@ const AdminPanel = () => {
   };
 
   const handleDeleteGenero = async () => {
-    if (!selectedGeneroId) return;
-    if (!window.confirm("Tem certeza que deseja deletar este gênero?")) return;
-
+    if (!selectedGeneroId || !window.confirm("Deseja deletar este gênero?")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/genero/${selectedGeneroId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await sendData("delete", `http://localhost:3000/genero/${selectedGeneroId}`);
       alert("Gênero deletado com sucesso!");
       setSelectedGeneroId("");
       getAllGeneros();
     } catch (error) {
       console.error("Erro ao deletar gênero:", error);
-      alert("Erro ao deletar gênero.");
     }
   };
 
   const handleAddGenero = async () => {
     if (!newGenero.name.trim()) return;
-
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:3000/genero",
-        {
-          name: newGenero.name,
-          image: newGenero.image,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await sendData("post", "http://localhost:3000/genero", newGenero);
       alert("Gênero adicionado com sucesso!");
-      setNewGenero({ name: "", image: "" });
+      setNewGenero(initialGenero);
       getAllGeneros();
     } catch (error) {
       console.error("Erro ao adicionar gênero:", error);
-      alert("Erro ao adicionar gênero.");
     }
   };
 
   const handleUpdateGenero = async () => {
     if (!updateGenero.id || !updateGenero.name.trim()) return;
-
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:3000/genero/${updateGenero.id}`,
-        {
-          name: updateGenero.name,
-          image: updateGenero.image,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await sendData("put", `http://localhost:3000/genero/${updateGenero.id}`, updateGenero);
       alert("Gênero atualizado com sucesso!");
-      setUpdateGenero({ id: "", name: "", image: "" });
+      setUpdateGenero({ ...initialGenero, id: "" });
       getAllGeneros();
     } catch (error) {
       console.error("Erro ao atualizar gênero:", error);
-      alert("Erro ao atualizar gênero.");
     }
   };
 
   const handleUpdateMovie = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:3000/filmes/${updateMovie.id}`,
-        {
-          name: updateMovie.name,
-          year: updateMovie.year,
-          duration: updateMovie.duration,
-          imageUrl: updateMovie.imageUrl,
-          videoUrl: updateMovie.videoUrl,
-          sinopse: updateMovie.sinopse,
-          genres: [updateMovie.genre],
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Filme atualizado com sucesso!");
-      setUpdateMovie({
-        id: "",
-        name: "",
-        year: "",
-        duration: "",
-        imageUrl: "",
-        videoUrl: "",
-        genre: "",
-        sinopse: "",
+      await sendData("put", `http://localhost:3000/filmes/${updateMovie.id}`, {
+        ...updateMovie,
+        genres: [updateMovie.genre],
       });
+      alert("Filme atualizado com sucesso!");
+      setUpdateMovie({ ...initialMovie, id: "" });
       getAllFilmes();
     } catch (error) {
       console.error("Erro ao atualizar filme:", error);
@@ -248,17 +160,34 @@ const AdminPanel = () => {
     },
   };
 
+  const renderTextFields = (fields: string[], values: any, setter: any) =>
+    fields.map((field) => (
+      <TextField
+        key={field}
+        label={field[0].toUpperCase() + field.slice(1)}
+        name={field}
+        value={values[field]}
+        onChange={(e) => handleChange(e, setter)}
+        fullWidth
+        variant="filled"
+        sx={{ ...textFieldStyle, mb: 2 }}
+      />
+    ));
+
   return (
     <Container maxWidth="xl" sx={{ mt: 10 }}>
-      <Typography variant="h4" align="center" gutterBottom color="white">
-        Painel Administrativo
-      </Typography>
-
+     <Typography
+  variant="h4"
+  align="center"
+  gutterBottom
+  color="white"
+  sx={{ fontFamily: '"Bebas Neue", sans-serif' }}
+>
+  Painel Administrativo
+</Typography>
       <Box
+        className="admin-form-container"
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 4,
           mt: 4,
           mb: 4,
           p: 4,
@@ -267,25 +196,10 @@ const AdminPanel = () => {
           boxShadow: 4,
         }}
       >
-        {/* Adicionar Filme e Gênero */}
-        <Box sx={{ width: "100%" }}>
-          <Typography variant="h6" gutterBottom color="white">
-            Adicionar Filme
-          </Typography>
-          {["name", "year", "duration", "imageUrl", "videoUrl", "sinopse"].map(
-            (field) => (
-              <TextField
-                key={field}
-                label={field[0].toUpperCase() + field.slice(1)}
-                name={field}
-                value={(movie as any)[field]}
-                onChange={(e) => handleChange(e, setMovie)}
-                fullWidth
-                variant="filled"
-                sx={{ ...textFieldStyle, mb: 2 }}
-              />
-            )
-          )}
+        {/* Formulário 1: Adicionar */}
+        <form className="admin-form" style={{ flex: 1, minWidth: 320 }}>
+          <Typography variant="h6" gutterBottom color="white">Adicionar Filme</Typography>
+          {renderTextFields(["name", "year", "duration", "imageUrl", "videoUrl", "sinopse"], movie, setMovie)}
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Gênero</InputLabel>
             <Select
@@ -295,54 +209,20 @@ const AdminPanel = () => {
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {generos.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.name}
-                </MenuItem>
+                <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button fullWidth variant="contained" onClick={handleAddMovie}>
-            Adicionar
-          </Button>
+          <Button fullWidth variant="contained" onClick={handleAddMovie}>Adicionar</Button>
 
-          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>
-            Adicionar Gênero
-          </Typography>
-          <TextField
-            label="Nome do Gênero"
-            value={newGenero.name}
-            onChange={(e) =>
-              setNewGenero((prev) => ({ ...prev, name: e.target.value }))
-            }
-            fullWidth
-            variant="filled"
-            sx={{ ...textFieldStyle, mb: 2 }}
-          />
-          <TextField
-            label="URL da Imagem do Gênero"
-            value={newGenero.image}
-            onChange={(e) =>
-              setNewGenero((prev) => ({ ...prev, image: e.target.value }))
-            }
-            fullWidth
-            variant="filled"
-            sx={{ ...textFieldStyle, mb: 2 }}
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleAddGenero}
-          >
-            Adicionar Gênero
-          </Button>
-        </Box>
+          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>Adicionar Gênero</Typography>
+          {renderTextFields(["name", "image"], newGenero, setNewGenero)}
+          <Button fullWidth variant="contained" onClick={handleAddGenero}>Adicionar Gênero</Button>
+        </form>
 
-        {/* Deletar Filme e Gênero */}
-        <Box sx={{ width: "100%" }}>
-          <Typography variant="h6" gutterBottom color="white">
-            Deletar Filme
-          </Typography>
+        {/* Formulário 2: Deletar */}
+        <form className="admin-form" style={{ flex: 1, minWidth: 320 }}>
+          <Typography variant="h6" gutterBottom color="white">Deletar Filme</Typography>
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Filme</InputLabel>
             <Select
@@ -351,24 +231,13 @@ const AdminPanel = () => {
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {filmes.map((f) => (
-                <MenuItem key={f.id} value={f.id}>
-                  {f.name}
-                </MenuItem>
+                <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button
-            fullWidth
-            variant="contained"
-            color="error"
-            onClick={handleDelete}
-          >
-            Deletar Filme
-          </Button>
+          <Button fullWidth variant="contained" color="error" onClick={handleDelete}>Deletar Filme</Button>
 
-          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>
-            Deletar Gênero
-          </Typography>
+          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>Deletar Gênero</Typography>
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Gênero</InputLabel>
             <Select
@@ -377,27 +246,16 @@ const AdminPanel = () => {
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {generos.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.name}
-                </MenuItem>
+                <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button
-            fullWidth
-            variant="contained"
-            color="error"
-            onClick={handleDeleteGenero}
-          >
-            Deletar Gênero
-          </Button>
-        </Box>
+          <Button fullWidth variant="contained" color="error" onClick={handleDeleteGenero}>Deletar Gênero</Button>
+        </form>
 
-        {/* Atualizar Filme e Gênero */}
-        <Box sx={{ width: "100%" }}>
-          <Typography variant="h6" gutterBottom color="white">
-            Atualizar Filme
-          </Typography>
+        {/* Formulário 3: Atualizar */}
+        <form className="admin-form" style={{ flex: 1, minWidth: 320 }}>
+          <Typography variant="h6" gutterBottom color="white">Atualizar Filme</Typography>
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Filme</InputLabel>
             <Select
@@ -420,26 +278,11 @@ const AdminPanel = () => {
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {filmes.map((f) => (
-                <MenuItem key={f.id} value={f.id}>
-                  {f.name}
-                </MenuItem>
+                <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          {["name", "year", "duration", "imageUrl", "videoUrl", "sinopse"].map(
-            (field) => (
-              <TextField
-                key={field}
-                label={field[0].toUpperCase() + field.slice(1)}
-                name={field}
-                value={(updateMovie as any)[field]}
-                onChange={(e) => handleChange(e, setUpdateMovie)}
-                fullWidth
-                variant="filled"
-                sx={{ ...textFieldStyle, mb: 2 }}
-              />
-            )
-          )}
+          {renderTextFields(["name", "year", "duration", "imageUrl", "videoUrl", "sinopse"], updateMovie, setUpdateMovie)}
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Gênero</InputLabel>
             <Select
@@ -449,25 +292,13 @@ const AdminPanel = () => {
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {generos.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.name}
-                </MenuItem>
+                <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button
-            fullWidth
-            variant="contained"
-            color="warning"
-            onClick={handleUpdateMovie}
-            disabled={!updateMovie.id}
-          >
-            Atualizar Filme
-          </Button>
+          <Button fullWidth variant="contained" color="warning" onClick={handleUpdateMovie} disabled={!updateMovie.id}>Atualizar Filme</Button>
 
-          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>
-            Atualizar Gênero
-          </Typography>
+          <Typography variant="h6" gutterBottom color="white" sx={{ mt: 4 }}>Atualizar Gênero</Typography>
           <FormControl fullWidth variant="filled" sx={{ mb: 2 }}>
             <InputLabel sx={{ color: "#ccc" }}>Gênero</InputLabel>
             <Select
@@ -475,52 +306,19 @@ const AdminPanel = () => {
               onChange={(e) => {
                 const genero = generos.find((g) => g.id === e.target.value);
                 if (genero) {
-                  setUpdateGenero({
-                    id: genero.id,
-                    name: genero.name,
-                    image: genero.image || "",
-                  });
+                  setUpdateGenero({ id: genero.id, name: genero.name, image: genero.image || "" });
                 }
               }}
               sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.1)" }}
             >
               {generos.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.name}
-                </MenuItem>
+                <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <TextField
-            label="Novo nome do gênero"
-            value={updateGenero.name}
-            onChange={(e) =>
-              setUpdateGenero((prev) => ({ ...prev, name: e.target.value }))
-            }
-            fullWidth
-            variant="filled"
-            sx={{ ...textFieldStyle, mb: 2 }}
-          />
-
-          <TextField
-            label="URL da imagem do gênero"
-            value={updateGenero.image || ""}
-            onChange={(e) =>
-              setUpdateGenero((prev) => ({ ...prev, image: e.target.value }))
-            }
-            fullWidth
-            variant="filled"
-            sx={{ ...textFieldStyle, mb: 2 }}
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="warning"
-            onClick={handleUpdateGenero}
-          >
-            Atualizar Gênero
-          </Button>
-        </Box>
+          {renderTextFields(["name", "image"], updateGenero, setUpdateGenero)}
+          <Button fullWidth variant="contained" color="warning" onClick={handleUpdateGenero}>Atualizar Gênero</Button>
+        </form>
       </Box>
     </Container>
   );

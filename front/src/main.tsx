@@ -18,13 +18,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* Rotas públicas - sem Layout */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/nova-senha" element={<NovaSenha />} />
-        {/* Rotas com Layout - protegidas */}
+
         <Route
           path="/"
           element={
@@ -37,11 +36,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="genero/:id" element={<GeneroFilmes />} />
           <Route path="admin" element={<AdminPanel />} />
           <Route path="filme/:id" element={<ReproducaoFilme />} />
-          <Route path="admin" element={<AdminPanel />} />
+          <Route path="filmes/:id" element={<ReproducaoFilme />} />
           <Route path="perfil" element={<Perfil />} />
-          <Route path="/favoritos" element={<Favoritos />} />
-          <Route path="/filmes/:id" element={<ReproducaoFilme />} />
-
+          <Route path="favoritos" element={<Favoritos />} />
         </Route>
       </Routes>
     </BrowserRouter>
