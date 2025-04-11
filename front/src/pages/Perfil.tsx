@@ -8,7 +8,7 @@ const Perfil = () => {
     id: string;
     name: string;
     email: string;
-    cpf?: string; // adicionado o campo cpf como opcional
+    cpf?: string;
   } | null>(null);
   const [novaSenha, setNovaSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
@@ -16,42 +16,54 @@ const Perfil = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (!userId) {
-      console.warn("⚠️ ID de usuário não encontrado no localStorage.");
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) {
+      console.warn("⚠️ ID de usuário ou token não encontrado no localStorage.");
       navigate("/login");
       return;
     }
 
     axios
-      .get(`http://localhost:3000/users/${userId}`)
+      .get(`http://localhost:3000/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
         console.log("📥 Usuário carregado:", res.data);
         setUser(res.data);
       })
       .catch((err) => {
         console.error("❌ Erro ao buscar dados do usuário:", err);
+        if (err.response?.status === 401) {
+          navigate("/login");
+        }
       });
   }, [navigate]);
 
   const handleTrocarSenha = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🔐 Tentando trocar a senha...");
+    const token = localStorage.getItem("token");
 
-    if (!user?.email || !novaSenha) {
-      console.warn("⚠️ Email ou nova senha não preenchidos.");
+    if (!user?.email || !novaSenha || !token) {
+      console.warn("⚠️ Dados incompletos para trocar a senha.");
       return;
     }
 
-    console.log("📤 Enviando dados:", {
-      email: user.email,
-      password: novaSenha,
-    });
-
     try {
-      await axios.post("http://localhost:3000/nova-senha", {
-        email: user.email,
-        password: novaSenha,
-      });
+      await axios.post(
+        "http://localhost:3000/nova-senha",
+        {
+          email: user.email,
+          password: novaSenha,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("✅ Senha atualizada com sucesso.");
       setMensagem("Senha atualizada com sucesso!");
@@ -63,26 +75,59 @@ const Perfil = () => {
   };
 
   const handleDeletarUsuario = async () => {
-    if (!user?.id) return;
+    const token = localStorage.getItem("token");
 
-    const confirmacao = window.confirm(
-      "Tem certeza que deseja excluir sua conta?"
-    );
-    if (!confirmacao) return;
+    if (!user?.id || !token) return;
+
+    const senha = window.prompt("Digite sua senha para confirmar:");
+
+    if (!senha) {
+      setMensagem("Operação cancelada.");
+      return;
+    }
 
     try {
-      await axios.delete(`http://localhost:3000/users/${user.id}`);
-      console.log("🗑️ Usuário deletado com sucesso.");
-      localStorage.clear();
-      navigate("/login");
+      // Verificar senha com backend
+      const res = await axios.post(
+        "http://localhost:3000/verificar-senha",
+        {
+          email: user.email,
+          password: senha,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.valido) {
+        const confirmacao = window.confirm("Tem certeza que deseja excluir sua conta?");
+        if (!confirmacao) {
+          setMensagem("Exclusão cancelada.");
+          return;
+        }
+
+        await axios.delete(`http://localhost:3000/users/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("🗑️ Usuário deletado com sucesso.");
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        setMensagem("Senha incorreta.");
+      }
     } catch (err) {
-      console.error("❌ Erro ao deletar usuário:", err);
-      setMensagem("Erro ao deletar usuário.");
+      console.error("❌ Erro ao verificar senha:", err);
+      setMensagem("Erro ao verificar senha.");
     }
   };
 
   const formatarCPF = (cpf: string) => {
-    const visivel = cpf.slice(0, 3); // mostra apenas os 3 primeiros
+    const visivel = cpf.slice(0, 3);
     return `${visivel}.***.***-**`;
   };
 

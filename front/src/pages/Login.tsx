@@ -45,9 +45,11 @@ const Login = () => {
   return (
     <div className="login-container">
       <Box className="login-box">
-        <Typography variant="h3" className="logo" align="center" gutterBottom>
-          GAMBYFLIX
-        </Typography>
+      <img
+  src="/logo.png"
+  alt="Logo Gambyflix"
+  className="logo-img"
+/>
 
         <TextField
           fullWidth

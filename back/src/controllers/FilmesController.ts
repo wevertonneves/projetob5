@@ -26,6 +26,7 @@ export const getFilmesByGenero = async (req: Request, res: Response) => {
         "duration",
         "image",
         "videoUrl",
+        "sinopse", // adicionado
       ],
     });
 
@@ -44,8 +45,17 @@ export const getAll = async (req: Request, res: Response) => {
           model: GenerosModel,
           as: "generos",
           attributes: ["id", "name"],
-          through: { attributes: [] }, // opcional: não mostrar dados da tabela intermediária
+          through: { attributes: [] },
         },
+      ],
+      attributes: [
+        "id",
+        "name",
+        "releaseYear",
+        "duration",
+        "image",
+        "videoUrl",
+        "sinopse", // adicionado
       ],
     });
     res.json(filmes);
@@ -78,6 +88,7 @@ export const getFilmeById = async (req: Request, res: Response) => {
         "duration",
         "image",
         "videoUrl",
+        "sinopse", // adicionado
       ],
     });
 
@@ -117,7 +128,7 @@ export const deleteFilme = async (req: Request, res: Response) => {
 
 export const addFilme = async (req: Request, res: Response) => {
   try {
-    const { name, year, duration, imageUrl, videoUrl, genres } = req.body;
+    const { name, year, duration, imageUrl, videoUrl, sinopse, genres } = req.body;
 
     if (
       !name ||
@@ -125,31 +136,77 @@ export const addFilme = async (req: Request, res: Response) => {
       !duration ||
       !imageUrl ||
       !videoUrl ||
+      !sinopse ||
       !genres ||
       genres.length === 0
     ) {
-      return res
-        .status(400)
-        .json({
-          error: "Todos os campos são obrigatórios, incluindo o(s) gênero(s).",
-        });
+      return res.status(400).json({
+        error: "Todos os campos são obrigatórios, incluindo o(s) gênero(s) e a sinopse.",
+      });
     }
 
-    // Cria o filme
     const novoFilme = await FilmesModel.create({
       name,
       releaseYear: year,
       duration,
       image: imageUrl,
       videoUrl,
+      sinopse,
     });
 
-    // Associa os gêneros (tabela FilmeGenero será populada automaticamente)
-    await novoFilme.setGeneros(genres); // genres deve ser um array de IDs
+    await novoFilme.setGeneros(genres);
 
     res.status(201).json(novoFilme);
   } catch (error) {
     console.error("Erro ao adicionar filme:", error);
     res.status(500).json({ error: "Erro ao adicionar filme." });
+  }
+};
+
+export const updateFilme = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const { name, year, duration, imageUrl, videoUrl, sinopse, genres } = req.body;
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    if (
+      !name ||
+      !year ||
+      !duration ||
+      !imageUrl ||
+      !videoUrl ||
+      !sinopse ||
+      !genres ||
+      genres.length === 0
+    ) {
+      return res.status(400).json({
+        error: "Todos os campos são obrigatórios, incluindo o(s) gênero(s) e a sinopse.",
+      });
+    }
+
+    const filme = await FilmesModel.findByPk(id);
+
+    if (!filme) {
+      return res.status(404).json({ error: "Filme não encontrado" });
+    }
+
+    await filme.update({
+      name,
+      releaseYear: year,
+      duration,
+      image: imageUrl,
+      videoUrl,
+      sinopse,
+    });
+
+    await filme.setGeneros(genres);
+
+    res.json({ message: "Filme atualizado com sucesso", filme });
+  } catch (error) {
+    console.error("Erro ao atualizar filme:", error);
+    res.status(500).json({ error: "Erro ao atualizar filme." });
   }
 };

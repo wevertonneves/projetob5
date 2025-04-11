@@ -31,7 +31,6 @@ const Cadastro = () => {
 
   useEffect(() => {
     document.body.classList.add("bg-cadastro");
-
     return () => {
       document.body.classList.remove("bg-cadastro");
     };
@@ -115,15 +114,26 @@ const Cadastro = () => {
     return isValid;
   };
 
+  const formatCpf = (value: string) => {
+    const cpfNumbers = value.replace(/\D/g, "").slice(0, 11);
+    return cpfNumbers
+      .replace(/^(\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1-$2");
+  };
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedCpf = formatCpf(e.target.value);
+    setCpf(formattedCpf);
+  };
+
   const handleCadastro = async () => {
     if (!validateFields()) return;
 
     try {
       const response = await fetch("http://localhost:3000/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: nome,
           email,
@@ -140,21 +150,25 @@ const Cadastro = () => {
         }
 
         setSuccessMessage(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        setTimeout(() => navigate("/login"), 2000);
       } else {
-        if (
-          data.error === "Este email já está cadastrado." ||
-          data.error === "Este email ou CPF já está cadastrado."
-        ) {
-          setEmailError(true);
-          setEmailLabel("⚠ Email já cadastrado!");
-        } else if (data.error.includes("CPF")) {
+        setCpfError(false);
+        setEmailError(false);
+
+        const msg = data.error?.toLowerCase() || "";
+
+        if (msg.includes("cpf")) {
           setCpfError(true);
           setCpfLabel(`⚠ ${data.error}`);
-        } else {
-          alert(data.error || "Erro ao cadastrar usuário.");
+        }
+
+        if (msg.includes("email")) {
+          setEmailError(true);
+          setEmailLabel(`⚠ ${data.error}`);
+        }
+
+        if (!msg.includes("cpf") && !msg.includes("email")) {
+          alert(data.error || "Erro ao cadastrar.");
         }
       }
     } catch (error) {
@@ -165,10 +179,17 @@ const Cadastro = () => {
 
   return (
     <div className="login-container">
-      <Typography variant="h2" className="logo">
-        CADASTRO
-      </Typography>
       <Box className="login-box">
+      <Typography
+  variant="h3"
+  className="logo netflix-font"
+  align="center"
+  gutterBottom
+  sx={{ fontFamily: "'Bebas Neue', sans-serif" }}
+>
+  CADASTRO
+</Typography>
+
         <TextField
           fullWidth
           variant="filled"
@@ -183,6 +204,7 @@ const Cadastro = () => {
           fullWidth
           variant="filled"
           label={emailLabel}
+          placeholder="exemplo@dominio.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="input-field"
@@ -204,8 +226,9 @@ const Cadastro = () => {
           fullWidth
           variant="filled"
           label={cpfLabel}
+          placeholder="000.000.000-00"
           value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
+          onChange={handleCpfChange}
           className="input-field"
           error={cpfError}
           InputLabelProps={{ style: cpfError ? errorStyle : {} }}

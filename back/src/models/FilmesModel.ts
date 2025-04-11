@@ -17,6 +17,7 @@ class FilmesModel extends Model<
   declare duration: number;
   declare image: string;
   declare videoUrl: string | null;
+  declare sinopse: string; // <-- nova coluna adicionada
 
   // Tipagem para relacionamentos (se necessário)
   declare setGeneros: (generoIds: number[]) => Promise<void>;
@@ -45,6 +46,10 @@ FilmesModel.init(
     videoUrl: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    sinopse: {
+      type: DataTypes.STRING(3000), // <-- definição da nova coluna
+      allowNull: false,
     },
   },
   {

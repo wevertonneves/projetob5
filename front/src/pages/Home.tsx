@@ -28,8 +28,14 @@ const Home = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
+      const token = localStorage.getItem("token");
+
       try {
-        const response = await axios.get("http://localhost:3000/genero");
+        const response = await axios.get("http://localhost:3000/genero", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setGenres(response.data);
       } catch (error) {
         console.error("Erro ao buscar gêneros:", error);

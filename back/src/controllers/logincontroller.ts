@@ -1,11 +1,18 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/UserModel";
+import dotenv from "dotenv";
 
-// 🔐 Chave secreta fixa apenas para testes (NÃO USAR EM PRODUÇÃO)
-const SECRET_KEY = "meuSegredoSuperSeguro";
+dotenv.config();
 
-console.log("🔐 JWT_SECRET carregado (fixo):", SECRET_KEY);
+// 🔐 Chave secreta do JWT vinda do .env
+const SECRET_KEY = process.env.JWT_SECRET as string;
+
+if (!SECRET_KEY) {
+  throw new Error("JWT_SECRET não está definido no arquivo .env");
+}
+
+console.log("🔐 JWT_SECRET carregado a partir do .env");
 
 // 📌 Função para gerar o token JWT
 export const generateToken = (user: { id: number; email: string }) => {

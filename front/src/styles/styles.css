@@ -1,4 +1,4 @@
-/* === 🌑 GERAL / BASE === */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 html,
 body {
   overflow: hidden;
@@ -10,18 +10,19 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: Arial, sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
+
   color: #fff;
   background-color: #141414; /* fallback */
 }
 
 .bg-admin {
-  background: url("../static/fundologin.png") no-repeat center center fixed;
+  background: url("../static/fundodlogin.png") no-repeat center center fixed;
   background-size: cover;
 }
 
 .bg-home {
-  background: url("../static/fundologsin.png") no-repeat center center fixed;
+  background: url("../static/hofme.jpg") no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -210,21 +211,10 @@ button {
   object-fit: cover;
 }
 
-.genero-filmes-details {
-  padding: 10px;
-  text-align: center;
-}
 
-.genero-filmes-name {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
 
-.genero-filmes-info {
-  font-size: 14px;
-  color: #bbb;
-}
+
+
 
 .genero-filmes-back-button {
   background-color: #e50914 !important;
@@ -238,13 +228,36 @@ button {
 }
 
 /* === 🔐 Auth Buttons Fixos === */
-.auth-buttons {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
+.auth-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
+
+.auth-button:hover {
+  background-color: #b20710;
+}
+
+.mensagem {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.mensagem.success {
+  color: green;
+}
+
+.mensagem.error {
+  color: red;
+}
+
+
 
 /* === 🛠️ PAINEL ADMINISTRATIVO === */
 .admin-form {
@@ -274,4 +287,254 @@ button {
 
 .admin-form .MuiButton-root {
   font-weight: bold;
+}
+/* Layout.tsx related */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.app-bar {
+  background-color: #000 !important;
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  min-height: 64px;
+}
+
+.logo-box {
+  cursor: pointer;
+}
+
+.logo-img {
+  width: 200px;
+  height: auto;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  background-color: #fff !important;
+  color: #1976d2 !important;
+}
+
+.user-name {
+  margin-left: 8px;
+}
+
+.appbar-spacer {
+  height: 64px;
+  min-height: 64px;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: 24px;
+}
+
+.footer {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 16px 0;
+  width: 100%;
+}
+.genero-filmes-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #121212; 
+  color: white;
+}
+
+.genero-filmes-image {
+  height: 360px; 
+}
+
+
+.genero-filmes-name {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  max-width: 180px;
+  word-break: break-word;
+}
+
+
+
+.genero-filmes-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.poster-wrapper {
+  position: relative;
+}
+
+.genero-filmes-image {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+
+.heart-icon {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  color: white !important;
+  z-index: 2;
+}
+
+.heart-icon:hover {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.genero-filmes-details {
+  background-color: black;
+  color: white;
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100px;  
+  justify-content: space-between;
+}
+
+
+
+.genero-filmes-info {
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.genero-loading {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+.favoritos-container {
+  min-height: 100vh;
+  padding: 32px;
+  padding-top: 80px; /* espaço do topo */
+}
+
+.favoritos-titulo {
+  color: #fff;
+}
+
+.favoritos-loading,
+.favoritos-vazio {
+  color: #fff;
+}
+
+.favoritos-link {
+  text-decoration: none;
+}
+
+.favoritos-card {
+  background-color: #121212;
+  color: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 450px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.favoritos-card:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+.favoritos-img {
+  height: 360px;
+  object-fit: cover;
+}
+
+.favoritos-info {
+  color: gray;
+}
+
+.reproducao-container {
+  padding: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.reproducao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.reproducao-titulo {
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.video-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  margin-bottom: 20px;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  border: none;
+  display: block;
+  background-color: black;
+}
+
+.reproducao-sinopse {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #cccccc;
+  margin-top: 20px;
+}
+
+.btn-voltar {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  text-transform: none !important;
+}
+
+.btn-curtir {
+  text-transform: none !important;
+}
+.netflix-font {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+  color: white;
+}
+.logo-img {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;
+  
 }

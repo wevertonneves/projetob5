@@ -7,13 +7,11 @@ const NovaSenha = () => {
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
 
   useEffect(() => {
     document.body.classList.add("bg-nova-senha");
 
-    // Recupera o email salvo no localStorage
     const emailSalvo = localStorage.getItem("emailRecuperacao");
     if (emailSalvo) {
       setEmail(emailSalvo);
@@ -34,8 +32,6 @@ const NovaSenha = () => {
       });
 
       setMensagem("Senha alterada com sucesso! Redirecionando...");
-
-      // Limpa o email salvo no localStorage
       localStorage.removeItem("emailRecuperacao");
 
       setTimeout(() => navigate("/login"), 2000);
@@ -51,6 +47,7 @@ const NovaSenha = () => {
 
   return (
     <div className="login-container">
+      <div className="background-overlay" />
       <div className="login-box">
         <h2 className="logo">Redefinir Senha</h2>
 

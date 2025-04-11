@@ -11,7 +11,7 @@ import NovaSenha from "./pages/NovaSenha";
 import Layout from "./components/Layout";
 import ReproducaoFilme from "./pages/ReproducaoFilme";
 import PrivateRoute from "./components/PrivateRoute";
-import Perfil from "./pages/perfil";
+import Perfil from "./pages/Perfil";
 import Favoritos from "./pages/Favoritos";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

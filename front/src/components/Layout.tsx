@@ -46,30 +46,20 @@ const Layout = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      width="100vw"
-      overflow="hidden"
-    >
-      <AppBar position="fixed" sx={{ backgroundColor: "#000", width: "100%" }}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography
-            variant="h6"
-            onClick={() => navigate("/home")}
-            sx={{ cursor: "pointer" }}
-          >
-            GAMBY FLIX
-          </Typography>
+    <Box className="layout-container">
+      <AppBar position="fixed" className="app-bar">
+        <Toolbar className="toolbar">
+          <Box onClick={() => navigate("/home")} className="logo-box">
+            <img src="/logo.png" alt="GAMBY FLIX Logo" className="logo-img" />
+          </Box>
 
-          <Box display="flex" alignItems="center">
+          <Box className="user-box">
             <IconButton onClick={handleMenuOpen}>
-              <Avatar sx={{ bgcolor: "#fff", color: "#1976d2" }}>
+              <Avatar className="user-avatar">
                 <PersonIcon />
               </Avatar>
             </IconButton>
-            <Typography variant="body1" sx={{ ml: 1 }}>
+            <Typography variant="body1" className="user-name">
               Olá, <strong>{username}</strong>
             </Typography>
             <Menu
@@ -89,24 +79,15 @@ const Layout = () => {
       </AppBar>
 
       {/* Espaçador da AppBar */}
-      <Toolbar />
+      <Toolbar className="appbar-spacer" />
 
       {/* Conteúdo principal */}
-      <Box component="main" flex="1" width="100%" p={3}>
+      <Box component="main" className="main-content">
         <Outlet />
       </Box>
 
       {/* Footer */}
-      <Box
-        component="footer"
-        sx={{
-          backgroundColor: "#000",
-          color: "#fff",
-          textAlign: "center",
-          py: 2,
-          width: "100%",
-        }}
-      >
+      <Box component="footer" className="footer">
         <Typography variant="body2">
           &copy; {new Date().getFullYear()} GAMBY FLIX. Todos os direitos
           reservados.
