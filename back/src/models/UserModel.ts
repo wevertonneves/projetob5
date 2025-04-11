@@ -16,6 +16,7 @@ interface UserAttributes {
   name: string;
   email: string;
   password: string;
+  cpf: string; // ✅ Nova propriedade
 }
 
 // Interface para criação de usuários (id opcional)
@@ -27,6 +28,7 @@ class UserModel extends Model<UserAttributes, UserCreationAttributes> {
   public name!: string;
   public email!: string;
   public password!: string;
+  public cpf!: string; // ✅ Nova propriedade
 
   // 🔐 Métodos personalizados
   public async hashPassword() {
@@ -67,6 +69,11 @@ UserModel.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    cpf: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true, // ✅ CPF deve ser único
     },
   },
   {

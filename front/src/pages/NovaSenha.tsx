@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/styles.css";
 
 const NovaSenha = () => {
   const [email, setEmail] = useState("");
@@ -8,104 +9,81 @@ const NovaSenha = () => {
   const [mensagem, setMensagem] = useState("");
   const navigate = useNavigate();
 
-  const handleNovaSenha = async (e: React.FormEvent) => {
-    e.preventDefault(); // Impede o recarregamento da página
+  useEffect(() => {
+    document.body.classList.add("bg-nova-senha");
+    return () => {
+      document.body.classList.remove("bg-nova-senha");
+    };
+  }, []);
 
-    console.log("📤 Enviando requisição para alterar senha...");
-    console.log("🔹 Email:", email);
-    console.log("🔹 Nova senha:", password);
+  const handleNovaSenha = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/nova-senha", {
+      await axios.post("http://localhost:3000/nova-senha", {
         email,
         password,
       });
 
-      console.log("✅ Resposta da API:", response.data);
       setMensagem("Senha alterada com sucesso! Redirecionando...");
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000); // Redireciona após 2 segundos
-    } catch (error: any) {
-      console.error("❌ Erro ao alterar senha:", error);
-
-      if (error.response) {
-        console.log("🔴 Resposta do servidor:", error.response.data);
-      } else if (error.request) {
-        console.log(
-          "⚠️ Nenhuma resposta do servidor. Verifique se a API está rodando."
-        );
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Erro da API:", error.response?.data || error.message);
       } else {
-        console.log("🚨 Erro na configuração da requisição:", error.message);
+        console.error("Erro inesperado:", error);
       }
-
       setMensagem("Erro ao alterar senha. Tente novamente.");
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "400px",
-        margin: "50px auto",
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-      }}
-    >
-      <h2>Redefinir Senha</h2>
+    <div className="login-container">
+      <div className="login-box">
+        <h2 className="logo">Redefinir Senha</h2>
 
-      <form onSubmit={handleNovaSenha}>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
+        <form onSubmit={handleNovaSenha}>
+          <div>
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Digite seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
 
-        <div style={{ marginBottom: "15px" }}>
-          <label>Nova Senha</label>
-          <input
-            type="password"
-            placeholder="Digite sua nova senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
+          <div>
+            <label htmlFor="senha">Nova Senha</label>
+            <input
+              id="senha"
+              type="password"
+              placeholder="Digite sua nova senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
 
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#1976d2",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-          }}
-        >
-          Alterar Senha
-        </button>
-      </form>
+          <button type="submit" className="auth-button">
+            Alterar Senha
+          </button>
+        </form>
 
-      {mensagem && (
-        <p
-          style={{
-            marginTop: "15px",
-            color: mensagem.includes("sucesso") ? "green" : "red",
-          }}
-        >
-          {mensagem}
-        </p>
-      )}
+        {mensagem && (
+          <p
+            className={`mensagem ${
+              mensagem.includes("sucesso") ? "success" : "error"
+            }`}
+          >
+            {mensagem}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

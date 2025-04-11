@@ -1,6 +1,4 @@
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Button,
   Box,
@@ -11,12 +9,11 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "../styles/styles.css";
 
 const AdminPanel = () => {
-  const navigate = useNavigate();
   const [movie, setMovie] = useState({
     name: "",
     year: "",
@@ -35,21 +32,20 @@ const AdminPanel = () => {
     getAllGeneros();
   }, []);
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    document.body.classList.add("bg-admin");
+
+    return () => {
+      document.body.classList.remove("bg-admin");
+    };
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMovie({ ...movie, [e.target.name]: e.target.value });
   };
 
-  const handleGenreChange = (event) => {
+  const handleGenreChange = (event: any) => {
     setMovie({ ...movie, genre: event.target.value });
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const handleGoHome = () => {
-    navigate("/home");
   };
 
   const getAllFilmes = async () => {
@@ -72,6 +68,11 @@ const AdminPanel = () => {
 
   const handleDelete = async () => {
     if (!selectedFilmeId) return;
+
+    const confirmacao = window.confirm(
+      "Tem certeza que deseja deletar este filme?"
+    );
+    if (!confirmacao) return;
 
     try {
       await axios.delete(`http://localhost:3000/filmes/${selectedFilmeId}`);
@@ -113,158 +114,111 @@ const AdminPanel = () => {
   };
 
   return (
-    <div>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">Painel Administrativo</Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleGoHome}
-            sx={{ marginLeft: "auto", marginRight: 2 }}
-          >
-            Voltar para Home
-          </Button>
-          <Button variant="contained" color="error" onClick={handleLogout}>
-            Sair
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <Container maxWidth="sm">
+      <Box component="form" className="admin-form">
+        <Typography variant="h4" align="center" gutterBottom>
+          Painel Administrativo
+        </Typography>
 
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Box
-          component="form"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            mt: 2,
-            backgroundColor: "#121212",
-            p: 3,
-            borderRadius: 2,
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            gutterBottom
-            sx={{ color: "white" }}
-          >
-            Adicionar e Remover Filmes
-          </Typography>
+        <TextField
+          label="Nome do Filme"
+          name="name"
+          value={movie.name}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Ano de Lançamento"
+          name="year"
+          value={movie.year}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Duração (min)"
+          name="duration"
+          value={movie.duration}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Link da capa do filme"
+          name="imageUrl"
+          value={movie.imageUrl}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Link do Vídeo"
+          name="videoUrl"
+          value={movie.videoUrl}
+          onChange={handleChange}
+          fullWidth
+        />
 
-          <TextField
-            label="Nome do Filme"
-            name="name"
-            value={movie.name}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{ style: { color: "white" } }}
-            InputLabelProps={{ style: { color: "white" } }}
-          />
-          <TextField
-            label="Ano de Lançamento"
-            name="year"
-            value={movie.year}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{ style: { color: "white" } }}
-            InputLabelProps={{ style: { color: "white" } }}
-          />
-          <TextField
-            label="Duração (min)"
-            name="duration"
-            value={movie.duration}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{ style: { color: "white" } }}
-            InputLabelProps={{ style: { color: "white" } }}
-          />
-          <TextField
-            label="Link da capa do filme"
-            name="imageUrl"
-            value={movie.imageUrl}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{ style: { color: "white" } }}
-            InputLabelProps={{ style: { color: "white" } }}
-          />
-          <TextField
-            label="Link do Vídeo"
-            name="videoUrl"
-            value={movie.videoUrl}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{ style: { color: "white" } }}
-            InputLabelProps={{ style: { color: "white" } }}
-          />
-
-          <FormControl fullWidth>
-            <InputLabel id="genre-label" sx={{ color: "white" }}>
-              Gênero
-            </InputLabel>
-            <Select
-              labelId="genre-label"
-              name="genre"
-              value={movie.genre}
-              onChange={handleGenreChange}
-              sx={{ color: "white" }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    backgroundColor: "#1e1e1e",
-                    color: "white",
-                  },
-                },
-              }}
-            >
-              {generos.map((genero) => (
-                <MenuItem key={genero.id} value={genero.id}>
-                  {genero.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Button variant="contained" color="primary" onClick={handleAddMovie}>
-            Adicionar Filme
-          </Button>
-
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="select-filme-label" sx={{ color: "white" }}>
-              Selecione um Filme para Deletar
-            </InputLabel>
-            <Select
-              labelId="select-filme-label"
-              value={selectedFilmeId}
-              onChange={(e) => setSelectedFilmeId(e.target.value)}
-              sx={{ color: "white" }}
-              MenuProps={{
-                PaperProps: {
+        <FormControl fullWidth>
+          <InputLabel id="genre-label">Gênero</InputLabel>
+          <Select
+            labelId="genre-label"
+            name="genre"
+            value={movie.genre}
+            onChange={handleGenreChange}
+            MenuProps={{
+              PaperProps: {
+                style: {
                   backgroundColor: "#1e1e1e",
                   color: "white",
                 },
-              }}
-            >
-              {filmes.map((filme) => (
-                <MenuItem key={filme.id} value={filme.id}>
-                  {filme.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleDelete}
-            disabled={!selectedFilmeId}
+              },
+            }}
           >
-            Deletar Filme Selecionado
-          </Button>
-        </Box>
-      </Container>
-    </div>
+            {generos.map((genero) => (
+              <MenuItem key={genero.id} value={genero.id}>
+                {genero.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Button variant="contained" color="primary" onClick={handleAddMovie}>
+          Adicionar Filme
+        </Button>
+
+        <FormControl fullWidth>
+          <InputLabel id="select-filme-label">
+            Selecione um Filme para Deletar
+          </InputLabel>
+          <Select
+            labelId="select-filme-label"
+            value={selectedFilmeId}
+            onChange={(e) => setSelectedFilmeId(e.target.value)}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  backgroundColor: "#1e1e1e",
+                  color: "white",
+                },
+              },
+            }}
+          >
+            {filmes.map((filme) => (
+              <MenuItem key={filme.id} value={filme.id}>
+                {filme.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleDelete}
+          disabled={!selectedFilmeId}
+        >
+          Deletar Filme Selecionado
+        </Button>
+      </Box>
+    </Container>
   );
 };
 

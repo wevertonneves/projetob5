@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -8,26 +8,54 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import "../styles/Login.css";
+import "../styles/styles.css";
 
 const Cadastro = () => {
   const navigate = useNavigate();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cpf, setCpf] = useState("");
 
   const [nomeError, setNomeError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [cpfError, setCpfError] = useState(false);
+
   const [emailLabel, setEmailLabel] = useState("Email");
   const [nomeLabel, setNomeLabel] = useState("Nome");
   const [passwordLabel, setPasswordLabel] = useState("Senha");
+  const [cpfLabel, setCpfLabel] = useState("CPF");
 
   const [successMessage, setSuccessMessage] = useState(false);
+
+  useEffect(() => {
+    document.body.classList.add("bg-cadastro");
+
+    return () => {
+      document.body.classList.remove("bg-cadastro");
+    };
+  }, []);
 
   const errorStyle = {
     color: "#d32f2f",
     fontWeight: "bold",
+  };
+
+  const isValidCPF = (cpf: string) => {
+    const cleanCPF = cpf.replace(/[^\d]/g, "");
+    if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false;
+
+    const calcCheckDigit = (base: string, factor: number) =>
+      base
+        .split("")
+        .reduce((sum, num, index) => sum + parseInt(num) * (factor - index), 0);
+
+    const base = cleanCPF.substring(0, 9);
+    const digit1 = (calcCheckDigit(base, 10) * 10) % 11 % 10;
+    const digit2 = (calcCheckDigit(base + digit1, 11) * 10) % 11 % 10;
+
+    return cleanCPF.endsWith(`${digit1}${digit2}`);
   };
 
   const validateFields = () => {
@@ -36,9 +64,12 @@ const Cadastro = () => {
     setNomeError(false);
     setEmailError(false);
     setPasswordError(false);
+    setCpfError(false);
+
     setEmailLabel("Email");
     setNomeLabel("Nome");
     setPasswordLabel("Senha");
+    setCpfLabel("CPF");
 
     if (!nome.trim()) {
       setNomeError(true);
@@ -71,6 +102,16 @@ const Cadastro = () => {
       isValid = false;
     }
 
+    if (!cpf.trim()) {
+      setCpfError(true);
+      setCpfLabel("⚠ O campo 'CPF' é obrigatório!");
+      isValid = false;
+    } else if (!isValidCPF(cpf)) {
+      setCpfError(true);
+      setCpfLabel("⚠ CPF inválido!");
+      isValid = false;
+    }
+
     return isValid;
   };
 
@@ -83,13 +124,17 @@ const Cadastro = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: nome, email, password }),
+        body: JSON.stringify({
+          name: nome,
+          email,
+          password,
+          cpf: cpf.replace(/[^\d]/g, ""),
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ Salva o userId (se retornado pelo backend)
         if (data.id) {
           localStorage.setItem("userId", data.id);
         }
@@ -99,9 +144,15 @@ const Cadastro = () => {
           navigate("/login");
         }, 2000);
       } else {
-        if (data.error === "Este email já está cadastrado.") {
+        if (
+          data.error === "Este email já está cadastrado." ||
+          data.error === "Este email ou CPF já está cadastrado."
+        ) {
           setEmailError(true);
           setEmailLabel("⚠ Email já cadastrado!");
+        } else if (data.error.includes("CPF")) {
+          setCpfError(true);
+          setCpfLabel(`⚠ ${data.error}`);
         } else {
           alert(data.error || "Erro ao cadastrar usuário.");
         }
@@ -149,6 +200,16 @@ const Cadastro = () => {
           error={passwordError}
           InputLabelProps={{ style: passwordError ? errorStyle : {} }}
         />
+        <TextField
+          fullWidth
+          variant="filled"
+          label={cpfLabel}
+          value={cpf}
+          onChange={(e) => setCpf(e.target.value)}
+          className="input-field"
+          error={cpfError}
+          InputLabelProps={{ style: cpfError ? errorStyle : {} }}
+        />
         <Button
           fullWidth
           variant="contained"
@@ -162,7 +223,6 @@ const Cadastro = () => {
         </Typography>
       </Box>
 
-      {/* Snackbar de sucesso */}
       <Snackbar
         open={successMessage}
         autoHideDuration={2000}

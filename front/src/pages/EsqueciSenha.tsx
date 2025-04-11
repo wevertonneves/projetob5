@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import axios from "axios";
-import "../styles/Login.css";
+import "../styles/styles.css";
 
 const RecuperarSenha = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
-  const [step, setStep] = useState(1); // 1 = pedir email, 2 = inserir código
+  const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    document.body.classList.add("bg-recuperar");
+
+    return () => {
+      document.body.classList.remove("bg-recuperar");
+    };
+  }, []);
 
   const handleEnviarCodigo = async () => {
     if (!email) {
@@ -35,12 +43,17 @@ const RecuperarSenha = () => {
     }
 
     try {
-      console.log(`🔍 Enviando para validação: { email: ${email}, codigoRecebido: ${code} }`);
-      const response = await axios.post("http://localhost:3000/validar-codigo", { email, codigoRecebido: code });
+      console.log(
+        `🔍 Enviando para validação: { email: ${email}, codigoRecebido: ${code} }`
+      );
+      const response = await axios.post(
+        "http://localhost:3000/validar-codigo",
+        { email, codigoRecebido: code }
+      );
 
       console.log("✅ Resposta do servidor:", response.data);
       setMessage(response.data.message);
-      navigate("/nova-senha"); // Redireciona para redefinição de senha
+      navigate("/nova-senha");
     } catch (err) {
       console.error("❌ Erro na validação:");
       setMessage("Código inválido! Tente novamente.");
@@ -65,7 +78,12 @@ const RecuperarSenha = () => {
               className="input-field"
             />
             {message && <Typography color="error">{message}</Typography>}
-            <Button fullWidth variant="contained" color="error" onClick={handleEnviarCodigo}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="error"
+              onClick={handleEnviarCodigo}
+            >
               Enviar Código
             </Button>
           </>
@@ -80,14 +98,21 @@ const RecuperarSenha = () => {
               className="input-field"
             />
             {message && <Typography color="error">{message}</Typography>}
-            <Button fullWidth variant="contained" color="error" onClick={handleVerificarCodigo}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="error"
+              onClick={handleVerificarCodigo}
+            >
               Verificar Código
             </Button>
           </>
         )}
 
         <Typography className="forgot-text">
-          <a href="#" onClick={() => navigate("/login")}>Voltar para o Login</a>
+          <a href="#" onClick={() => navigate("/login")}>
+            Voltar para o Login
+          </a>
         </Typography>
       </Box>
     </div>

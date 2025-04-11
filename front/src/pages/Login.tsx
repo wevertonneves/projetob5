@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import axios from "axios";
-import "../styles/Login.css";
+import "../styles/styles.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    document.body.classList.add("bg-login");
+
+    return () => {
+      document.body.classList.remove("bg-login");
+    };
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -24,22 +32,23 @@ const Login = () => {
 
       const { token, user } = response.data;
 
-      // Salvando token e ID do usuário no localStorage
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", user.id); // <- ESSENCIAL!
+      localStorage.setItem("userId", user.id);
+      localStorage.setItem("username", user.name);
 
       navigate("/home");
-    } catch (err) {
+    } catch {
       setError("Credenciais inválidas!");
     }
   };
 
   return (
     <div className="login-container">
-      <Typography variant="h2" className="logo">
-        GAMBYFLIX
-      </Typography>
       <Box className="login-box">
+        <Typography variant="h3" className="logo" align="center" gutterBottom>
+          GAMBYFLIX
+        </Typography>
+
         <TextField
           fullWidth
           variant="filled"
@@ -66,6 +75,7 @@ const Login = () => {
         >
           ENTRAR
         </Button>
+
         <Typography className="register-text">
           NÃO É MEMBRO?{" "}
           <span className="link" onClick={() => navigate("/cadastro")}>
