@@ -40,6 +40,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="admin" element={<AdminPanel />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="/favoritos" element={<Favoritos />} />
+          <Route path="/filmes/:id" element={<ReproducaoFilme />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

@@ -6,7 +6,9 @@ import {
   updateUser,
   updatePassword ,
   destroyUserByid,
-  verificarSenha,
+  verificarSenha, 
+
+
 } from "../controllers/userController";
 
 import { authMiddleware } from "../middleware/authMiddleware";
@@ -20,5 +22,8 @@ router.put("/users/:id", authMiddleware, updateUser);
 router.delete("/users/:id", authMiddleware, destroyUserByid);
 router.post("/nova-senha", updatePassword);
 router.post("/verificar-senha", verificarSenha);
+
+
+
 
 export default router;

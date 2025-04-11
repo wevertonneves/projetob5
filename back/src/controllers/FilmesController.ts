@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import FilmesModel from "../models/FilmesModel";
 import GenerosModel from "../models/GenerosModel";
+import { Op } from "sequelize";
 
 export const getFilmesByGenero = async (req: Request, res: Response) => {
   try {
@@ -208,5 +209,49 @@ export const updateFilme = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Erro ao atualizar filme:", error);
     res.status(500).json({ error: "Erro ao atualizar filme." });
+  }
+};
+
+export const searchFilmeByName = async (req: Request, res: Response) => {
+  try {
+    const { nome } = req.query;
+
+    if (!nome || typeof nome !== "string") {
+      return res.status(400).json({ error: "Nome do filme é obrigatório" });
+    }
+
+    const filme = await FilmesModel.findOne({
+      where: {
+        name: {
+          [Op.like]: `%${nome}%`, // ✅ Funciona com MySQL
+         // ou [Op.like] se não estiver usando PostgreSQL
+        },
+      },
+      include: [
+        {
+          model: GenerosModel,
+          as: "generos",
+          attributes: ["id", "name"],
+        },
+      ],
+      attributes: [
+        "id",
+        "name",
+        "releaseYear",
+        "duration",
+        "image",
+        "videoUrl",
+        "sinopse",
+      ],
+    });
+
+    if (!filme) {
+      return res.status(404).json({ error: "Filme não encontrado" });
+    }
+
+    res.json(filme);
+  } catch (error) {
+    console.error("Erro ao buscar filme por nome:", error);
+    res.status(500).json({ error: "Erro ao buscar filme por nome" });
   }
 };

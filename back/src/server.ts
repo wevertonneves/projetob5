@@ -47,6 +47,8 @@ app.use(GeneroRoutes);
 app.use(loginRoutes);
 app.use(favoritoRoutes);
 app.use("/", recuperarSenhaRoutes);
+
+
 // 🧠 Armazena códigos temporários para recuperação de senha
 const codigosRecuperacao: {
   [key: string]: { codigo: string; expira: number };

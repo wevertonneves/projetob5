@@ -1,0 +1,176 @@
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+--
+-- Host: localhost    Database: netgamby
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.4.32-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `favoritos`
+--
+
+DROP TABLE IF EXISTS `favoritos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `favoritos` (
+  `userId` int(11) NOT NULL,
+  `filmeId` int(11) NOT NULL,
+  PRIMARY KEY (`userId`,`filmeId`),
+  UNIQUE KEY `favoritos_filmeId_userId_unique` (`userId`,`filmeId`),
+  KEY `filmeId` (`filmeId`),
+  CONSTRAINT `favoritos_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `favoritos_ibfk_2` FOREIGN KEY (`filmeId`) REFERENCES `filmes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `favoritos`
+--
+
+LOCK TABLES `favoritos` WRITE;
+/*!40000 ALTER TABLE `favoritos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `favoritos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `filmegenero`
+--
+
+DROP TABLE IF EXISTS `filmegenero`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `filmegenero` (
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `generoId` int(11) NOT NULL,
+  `filmeId` int(11) NOT NULL,
+  PRIMARY KEY (`generoId`,`filmeId`),
+  KEY `filmeId` (`filmeId`),
+  CONSTRAINT `filmegenero_ibfk_1` FOREIGN KEY (`generoId`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `filmegenero_ibfk_2` FOREIGN KEY (`filmeId`) REFERENCES `filmes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `filmegenero`
+--
+
+LOCK TABLES `filmegenero` WRITE;
+/*!40000 ALTER TABLE `filmegenero` DISABLE KEYS */;
+INSERT INTO `filmegenero` VALUES ('2025-09-09 00:00:00','2025-09-09 00:00:00',1,1),('2025-09-09 00:00:00','2025-09-09 00:00:00',1,2),('2025-09-09 00:00:00','2025-09-09 00:00:00',1,3),('2025-09-09 00:00:00','2025-09-09 00:00:00',1,21),('2025-09-09 00:00:00','2025-09-09 00:00:00',1,22),('2025-09-09 00:00:00','2025-09-09 00:00:00',2,4),('2025-09-09 00:00:00','2025-09-09 00:00:00',2,5),('2025-09-09 00:00:00','2025-09-09 00:00:00',2,6),('2025-09-09 00:00:00','2025-09-09 00:00:00',2,19),('2025-09-09 00:00:00','2025-09-09 00:00:00',2,20),('2025-09-09 00:00:00','2025-09-09 00:00:00',3,7),('2025-09-09 00:00:00','2025-09-09 00:00:00',3,8),('2025-09-09 00:00:00','2025-09-09 00:00:00',3,9),('2025-09-09 00:00:00','2025-09-09 00:00:00',3,23),('2025-09-09 00:00:00','2025-09-09 00:00:00',3,24),('2025-09-09 00:00:00','2025-09-09 00:00:00',4,10),('2025-09-09 00:00:00','2025-09-09 00:00:00',4,11),('2025-09-09 00:00:00','2025-09-09 00:00:00',4,12),('2025-09-09 00:00:00','2025-09-09 00:00:00',4,25),('2025-09-09 00:00:00','2025-09-09 00:00:00',4,26),('2025-09-09 00:00:00','2025-09-09 00:00:00',5,13),('2025-09-09 00:00:00','2025-09-09 00:00:00',5,14),('2025-09-09 00:00:00','2025-09-09 00:00:00',5,15),('2025-09-09 00:00:00','2025-09-09 00:00:00',5,27),('2025-09-09 00:00:00','2025-09-09 00:00:00',5,28),('2025-09-09 00:00:00','2025-09-09 00:00:00',6,16),('2025-09-09 00:00:00','2025-09-09 00:00:00',6,17),('2025-09-09 00:00:00','2025-09-09 00:00:00',6,18);
+/*!40000 ALTER TABLE `filmegenero` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `filmes`
+--
+
+DROP TABLE IF EXISTS `filmes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `filmes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `releaseYear` int(11) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `videoUrl` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `sinopse` varchar(3000) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `filmes`
+--
+
+LOCK TABLES `filmes` WRITE;
+/*!40000 ALTER TABLE `filmes` DISABLE KEYS */;
+INSERT INTO `filmes` VALUES (1,'Velozes e Furiosos 2',2003,105,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/90/03/20/20077808.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/A%C3%87%C3%83O/VELOZES%20E%20FURIOSOS/Velozes%20%2B%20Furiosos%20.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Após deixar a polícia, Brian O\'Conner (Paul Walker) é forçado a participar de uma nova missão: se infiltrar no crime organizado de Miami de forma a investigar sobre o transporte de dinheiro sujo para Carter Verone (Cole Hauser), o chefe do tráfico local. Para tanto ele recebe a ajuda de seu ex-colega Roman Pearce (Tyrese) e da agente secreta Monica Clemente (Eva Mendes).'),(2,'Cães De Guerra',2016,115,'https://br.web.img2.acsta.net/c_310_420/pictures/16/04/16/00/25/503456.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/A%C3%87%C3%83O/C%C3%A3es%20de%20Guerra.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','David Packouz (Miles Teller) leva uma vida tranquila em Miami, é casado e vai ter um bebê. Efraim (Jonah Hill) tem um negócio lucrativo e, vendo que David vem passando por dificuldades financeiras, resolve chamar o amigo de infância para trabalhar com ele. Os dois, que na adolescência já foram presos fumando maconha, entram numa nova jornada juntos, descobrindo um enorme mercado de venda de armas.'),(3,'John Wick 3 - Parabellum',2019,132,'https://br.web.img2.acsta.net/c_310_420/pictures/19/04/03/21/31/0977319.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/A%C3%87%C3%83O/JOHN%20WICK/John.Wick.3.Parabellum.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','John Wick (Keanu Reeves) já foi um dos assassinos mais temidos da cidade de Nova York, trabalhando em parceria com a máfia russa. Um dia, ele decide se aposentar, e neste período tem que lidar com a triste morte de sua esposa. Vítima de uma doença grave, ela já previa a sua própria morte, e deu de presente ao marido um cachorro para cuidar em seu período de luto. No entanto, poucos dias após o funeral, o cachorro é morto por ladrões que roubam o seu carro. John Wick parte em busca de vingança contra estes homens que ele já conhecia muito bem, e que roubaram o último símbolo da mulher que ele amava.'),(4,'Interestelar',2014,169,'https://br.web.img3.acsta.net/c_310_420/pictures/14/10/31/20/39/476171.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/FIC%C3%87%C3%83O/Interestelar.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Após ver a Terra consumindo boa parte de suas reservas naturais, um grupo de astronautas recebe a missão de verificar possíveis planetas para receberem a população mundial, possibilitando a continuação da espécie. Cooper (Matthew McConaughey) é chamado para liderar o grupo e aceita a missão sabendo que pode nunca mais ver os filhos. Ao lado de Brand (Anne Hathaway), Jenkins (Marlon Sanders) e Doyle (Wes Bentley), ele seguirá em busca de uma nova casa. Com o passar dos anos, sua filha Murph (Mackenzie Foy e Jessica Chastain) investirá numa própria jornada para também tentar salvar a população do planeta.'),(5,'Harry Potter e a Pedra Filosofal',2001,152,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/95/59/60/20417256.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/FIC%C3%87%C3%83O/Harry%20Potter/1-Harry%20Potter%20e%20a%20Pedra%20Filosofal.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Harry Potter (Daniel Radcliffe) é um garoto órfão de 10 anos que vive infeliz com seus tios, os Dursley. Até que, repentinamente, ele recebe uma carta contendo um convite para ingressar em Hogwarts, uma famosa escola especializada em formar jovens bruxos. Inicialmente Harry é impedido de ler a carta por seu tio Válter (Richard Griffiths), mas logo ele recebe a visita de Hagrid (Robbie Coltrane), o guarda-caça de Hogwarts, que chega em sua casa para levá-lo até a escola. A partir de então Harry passa a conhecer um mundo mágico que jamais imaginara, vivendo as mais diversas aventuras com seus mais novos amigos, Rony Weasley (Rupert Grint) e Hermione Granger (Emma Watson).'),(6,'Matrix',1999,135,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/91/08/82/20128877.JPG','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/FIC%C3%87%C3%83O/Harry%20Potter/2-Harry%20Potter%20e%20a%20Camara%20Secreta.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Em um futuro próximo, Thomas Anderson (Keanu Reeves), um jovem programador de computador que mora em um cubículo escuro, é atormentado por estranhos pesadelos nos quais encontra-se conectado por cabos e contra sua vontade, em um imenso sistema de computadores do futuro. Em todas essas ocasiões, acorda gritando no exato momento em que os eletrodos estão para penetrar em seu cérebro. À medida que o sonho se repete, Anderson começa a ter dúvidas sobre a realidade. Por meio do encontro com os misteriosos Morpheus (Laurence Fishburne) e Trinity (Carrie-Anne Moss), Thomas descobre que é, assim como outras pessoas, vítima do Matrix, um sistema inteligente e artificial que manipula a mente das pessoas, criando a ilusão de um mundo real enquanto usa os cérebros e corpos dos indivíduos para produzir energia. Morpheus, entretanto, está convencido de que Thomas é Neo, o aguardado messias capaz de enfrentar o Matrix e conduzir as pessoas de volta à realidade e à liberdade.'),(7,'Psicose',1960,109,'https://br.web.img2.acsta.net/c_310_420/pictures/14/10/07/20/12/205686.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/SUSPENSE/Psicose%20(1960)%20BluRay%201080p%20Dual%20%C3%81udio/Psicose%20(1960)%20BluRay%201080p%20Dual%20%C3%81udio.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Em Psicose, Marion Crane (Janet Leigh) é uma secretária que rouba 40 mil dólares da imobiliária onde trabalha para se casar e começar uma nova vida. Durante a fuga a carro, ela enfrenta uma forte tempestade, erra o caminho e chega em um velho hotel. O estabelecimento é administrado por um sujeito atencioso chamado Norman Bates (Anthony Perkins), que nutre um forte respeito e temor por sua mãe. Marion decide passar a noite no local, sem saber o perigo que a cerca.'),(8,'Olhos Famintos',2001,90,'https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/83/33/19962015.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Terror/OLHOS%20FAMINTOS/Olhos%20Famintos.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Trish (Gina Phillips) e seu irmão Darryl (Justin Long) descobrem algo horrível no porão de uma igreja abandonada. Agora, em viagem de carro de volta para casa, eles são o alvo de uma força indescritível que deseja acabar com eles de qualquer maneira.'),(9,'A Autópsia',2017,90,'https://br.web.img3.acsta.net/c_310_420/pictures/17/04/03/21/49/067456.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Terror/A.Aut%C3%B3psia.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Tommy Tilden (Brian Cox) e Austin Tilden (Emile Hirsch), seu filho, são os reponsáveis por comandar o necrotério de uma pequena cidade do interior dos Estados Unidos. Os trabalhos que recebem costumam ser muito tranquilos por causa da natureza pacata da cidade, mas, certo dia, o xerife local (Michael McElhatton) traz um caso complicado: uma mulher desconhecida foi encontrada morta nos arredores da cidade - \"Jane Doe\", no jargão americano. Conforme pai e filho tentam descobrir a identidade da mulher morta, coisas estranhas e perigosas começam a ocorrer, colocando a vida dos dois em perigo.'),(10,'Ace Ventura 2 - Um Maluco na África',1996,98,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/75/75/19961235.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Comedia/Ace.Ventura.2.Um.Maluco.na.Africa.avi','2025-09-09 00:00:00','2025-09-09 00:00:00','Após não conseguir salvar um guaxinim, Ace Ventura (Jim Carrey) impõe a si mesmo um exílio entre os monges no Himalaia. Após isso, ele viaja para o continente africano, a fim de tentar recuperar o grande morcego branco sagrado, que foi prometido como dote quando a princesa dos Wachati, uma tribo pacífica, se casar com o filho mais velho dos Wachootoo, uma tribo sanguinária. Se o morcego não for recuperado em tempo hábil isto ocasionará uma guerra e os Wachati serão massacrados, pois os Wachootoo vão considerar isto um insulto e o desaparecimento do morcego uma maldição. Ace tenta ajudar da melhor maneira possível, mas para ele a melhor forma implica em várias confusões.'),(11,'Família do Bagulho',2013,110,'https://br.web.img2.acsta.net/c_310_420/pictures/210/327/21032794_20130828164937825.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Comedia/Familia.do.Bagulho.avi','2025-09-09 00:00:00','2025-09-09 00:00:00','Após ser roubado, o traficante de meia tigela David Clark (Jason Sudeikis) é obrigado por seu chefe, Brad Gurdlinger (Ed Helms), a viajar até o México para fechar uma negociação envolvendo um grande carregamento de maconha. Para tanto David precisa formar uma família de mentira e com isso convida a stripper Rose O\'Reilly (Jennifer Aniston) para ser sua falsa esposa. A delinquente Casey (Emma Roberts) e o virgem Kenny (Will Poulter) logo entram no plano e juntos eles formam os Miller, que aparentemente estariam fazendo uma pacata viagem rumo ao México a bordo do trailer da família. Entretanto, ao longo do caminho os antigos hábitos voltam à tona e nem tudo sai como o planejado.'),(12,'Se Beber, Não Case!',2009,90,'https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/29/37/19874003.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Comedia/SE%20BEBER%20NAO%20CASE/I.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Doug Billings (Justin Bartha) está prestes a se casar. Stu Price (Ed Helms), um dentista que planeja pedir a namorada em casamento, Phil Wenneck (Bradley Cooper), um professor colegial entediado com o matrimônio, e Alan Garner (Zach Galifianakis), seu futuro cunhado, são seus melhores amigos. O trio organiza uma festa de despedida de solteiro para Doug, levando-o para Las Vegas. Lá eles alugam uma suíte e têm uma noite de grande badalação. Na manhã seguinte os três acordam sem ter a menor idéia do que aconteceu na noite anterior. Eles sabem apenas que Stu perdeu um dente, há um tigre no banheiro, um bebê no closet e Doug simplesmente desapareceu. Para descobrir o que ocorreu, eles tentam juntar as memórias e reconstituir os eventos do dia anterior.'),(13,'Madagascar 2',2008,95,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/83/77/19962059.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Animacao/04-%20madagascar%202.avi','2025-09-09 00:00:00','2025-09-09 00:00:00','O leão Alex (Ben Stiller) é a grande atração do zoológico do Central Park, em Nova York. Ele e seus melhores amigos, a zebra Marty (Chris Rock), a girafa Melman (David Schwimmer) e a hipopótamo Gloria (Jada Pinkett Smith), sempre passaram a vida em cativeiro e desconhecem o que é morar na selva. Curioso em saber o que há por trás dos muros do zoo, Marty decide fugir e explorar o mundo. Ao perceberem, Alex, Gloria e Melman decidem partir à sua procura. O trio encontra Marty na estação Grand Central do metrô, mas antes que consigam voltar para casa são atingidos por dardos tranquilizantes e capturados. Embarcados em um navio rumo à África, eles acabam na ilha de Madagascar, onde precisam encontrar meios de sobrevivência em uma selva verdadeira.'),(14,'A Era do Gelo: O Big Bang',2016,94,'https://br.web.img2.acsta.net/c_310_420/pictures/16/01/18/22/28/052277.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Animacao/A%20Era%20do%20Gelo%20-%20O%20Big%20Bang%20.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','O mamute Manny (Ray Romano/Diogo Vilela), o tigre de dente de sabre Diego (Dennis Leary/Márcio Garcia) e a preguiça-gigante Sid (John Leguizamo/Tadeu Melo) são amigos em uma época muito distante dos dias atuais e vivem suas vidas em meio a muito gelo. Até o dia em que eles encontram um menino esquimó totalmente sozinho, longe de seus pais, e decidem que precisam ajudá-lo a achar a sua família. Enquanto isso, o esquilo pré-histórico Scrat segue na sua saga para manter sua amada noz protegida de outros predadores.'),(15,'Shrek',2001,89,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/91/54/04/20150812.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Animacao/Trilogia%20Shrek%202001%20-%202010%20WWW.BLUDV.COM/Shrek%202001%20WWW.BLUDV.COM/Shrek.2001.720p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Em um pântano distante vive Shrek (Mike Myers), um ogro solitário que vê, sem mais nem menos, sua vida ser invadida por uma série de personagens de contos de fada, como três ratos cegos, um grande e malvado lobo e ainda três porcos que não têm um lugar onde morar. Todos eles foram expulsos de seus lares pelo maligno Lorde Farquaad (John Lithgow). Determinado a recuperar a tranquilidade de antes, Shrek resolve encontrar Farquaad e com ele faz um acordo: todos os personagens poderão retornar aos seus lares se ele e seu amigo Burro (Eddie Murphy) resgatarem uma bela princesa (Cameron Diaz), que é prisioneira de um dragão. Porém, quando Shrek e o Burro enfim conseguem resgatar a princesa logo eles descobrem que seus problemas estão apenas começando.'),(16,'A Rede Social',2010,120,'https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/32/90/19874370.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/BIOGRAFIA/a%20rede%20social.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Em uma noite de outono em 2003, Mark Zuckerberg (Jesse Eisenberg), analista de sistemas graduado em Harvard, se senta em seu computador e começa a trabalhar em uma nova ideia. Apenas seis anos e 500 milhões de amigos mais tarde, Zuckerberg se torna o mais jovem bilionário da história com o sucesso da rede social Facebook. O sucesso, no entanto, o leva a complicações em sua vida social e profissional'),(17,'Jobs',2013,133,'https://br.web.img3.acsta.net/c_310_420/pictures/210/250/21025081_20130806175503533.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/BIOGRAFIA/JOBS.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','De hippie sem foco nos estudos a líder de uma das maiores empresas de tecnologia do mundo. Este é Steve Jobs (Ashton Kutcher), um sujeito de personalidade forte e dedicado, que não se incomoda de passar por cima dos outros para atingir suas metas, o que faz com que tenha dificuldades em manter relações amorosas e de amizade.'),(18,'Fome de Poder',2017,115,'https://br.web.img2.acsta.net/c_310_420/pictures/17/02/21/19/09/113794.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/BIOGRAFIA/Fome.de.Poder.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','A história da ascensão do McDonald\'s. Após receber uma demanda sem precedentes e notar uma movimentação de consumidores fora do normal, o vendedor de Illinois Ray Kroc (Michael Keaton) adquire uma participação nos negócios da lanchonete dos irmãos Richard e Maurice \"Mac\" McDonald no sul da Califórnia e, pouco a pouco eliminando os dois da rede, transforma a marca em um gigantesco império alimentício.'),(19,'Alien, o 8º Passageiro',1979,114,'https://br.web.img3.acsta.net/c_310_420/pictures/15/05/14/21/14/504650.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/FIC%C3%87%C3%83O/Alliens/Alien%2C%20o%208%C2%BA%20Passageiro.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Uma nave espacial, ao retornar para Terra, recebe estranhos sinais vindos de um asteróide. Ao investigarem o local, um dos tripulantes é atacado por um estranho ser. O que parecia ser um ataque isolado se transforma em um terror constante, pois o tripulante atacado levou para dentro da nave o embrião de um alienígena, que não para de crescer e tem como meta matar toda a tripulação.'),(20,'Godzilla II: Rei dos Monstros',2019,132,'https://br.web.img2.acsta.net/c_310_420/pictures/19/04/18/19/03/2204946.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/FIC%C3%87%C3%83O/GODZILLA/Godzilla.II.Rei.dos.Monstros.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Nesta continuação que se passa cinco anos após Godzilla (2014), os integrantes da agência Monarch precisam lidar com a súbita aparição de vários monstros, incluindo Mothra, Rodan e Ghidorah. Enquanto buscam uma aliança com o próprio Godzilla a fim de garantir o equilíbrio da Terra, os humanos acabam fazendo parte de uma grande disputa por poder protagonizada por titãs.'),(21,'Indiana Jones e o Templo da Perdição',1984,118,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/91/98/02/20172661.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/A%C3%87%C3%83O/Indiana%20Jones/Indiana%20Jones%20e%20o%20Templo%20da%20Perdi%C3%A7%C3%A3o.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Em 1935, o professor, arqueólogo e aventureiro Indiana Jones (Harrison Ford) tem uma nova missão: resgatar as pedras roubadas por um feiticeiro e libertar crianças escravizadas. Para tanto, enfrenta os poderes mágicos e o fanatismo de um culto que sacrifica seres humanos.'),(22,'O Poderoso Chefão',1972,175,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/90/93/20/20120876.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/A%C3%87%C3%83O/O%20PODEROSO%20CHEF%C3%83O/O%20Poderoso%20Chef%C3%A3o%20-%20Parte%20I%201080p%20(1972)%20Dual%20%C3%81udio%20BluRay%205.1%20--%20By%20-%20Lucas%20Firmo.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Don Vito Corleone (Marlon Brando) é o chefe de uma \"família\" de Nova York que está feliz, pois Connie (Talia Shire), sua filha, se casou com Carlo (Gianni Russo). Porém, durante a festa, Bonasera (Salvatore Corsitto) é visto no escritório de Don Corleone pedindo \"justiça\", vingança na verdade contra membros de uma quadrilha, que espancaram barbaramente sua filha por ela ter se recusado a fazer sexo para preservar a honra. Vito discute, mas os argumentos de Bonasera o sensibilizam e ele promete que os homens, que maltrataram a filha de Bonasera não serão mortos, pois ela também não foi, mas serão severamente castigados. Vito porém deixa claro que ele pode chamar Bonasera algum dia para devolver o \"favor\". Do lado de fora, no meio da festa, está o terceiro filho de Vito, Michael (Al Pacino), um capitão da marinha muito decorado que há pouco voltou da 2ª Guerra Mundial.'),(23,'O Albergue',2006,94,'https://br.web.img2.acsta.net/c_310_420/pictures/14/10/07/20/11/210244.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Terror/O%20Albergue/O%20Albergue.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Em O Albergue, Paxton (Jay Hernandez) e Josh (Derek Richardson) são dois mochileiros universitários americanos, que decidem viajar pela Europa em busca de experiências que entorpeçam os sentidos e a memória. Durante a viagem eles conhecem Oli (Eythor Gudjonsson), um islandês que passa a acompanhá-los. Seduzidos pelos relatos de outro viajante, eles decidem ir a um albergue particular em uma cidade desconhecida da Eslováquia que é descrito como um verdadeiro nirvana. Lá eles conhecem Natalya (Barbara Nadeljakova) e Svetlana (Jana Kaderabkova), duas beldades locais que se interessam por Paxton e Josh. Empolgados com as experiências novas que vivem, eles logo descobrem que nem tudo na cidade é a maravilha aparente.'),(24,'Pânico na Floresta',2004,84,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/87/34/19962416.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Terror/P%C3%A2nico%20na%20Floresta%20.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Cinco amigos percorrem uma trilha na floresta, em pleno estado da Virginia. Após pegarem o caminho errado, eles se deparam com uma família de canibais, que possui o rosto desfigurado devido a diversas gerações cosanguíneas terem nascido. Desesperados após serem capturados, os amigos agora querem apenas fugir do local o mais rápido possível.'),(25,'American Pie - A 1ª Vez é Inesquecível',1999,95,'https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/29/95/19874065.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Comedia/American%20Pie/American%20Pie%201%20(1999)%20BDRip%20720p%20dublado/American%20Pie%201%2C%20A%20Primeira%20Vez%20%C3%A9%20Inesquec%C3%ADvel%20(1999).mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','Às vésperas do baile de formatura, quatro amigos virgens - Jim (Jason Biggs), Kevin (Thomas Ian Nicholas), Oz (Chris Klein) e Finch (Eddie Kaye Thomas) - fazem um pacto para perder a virgindade, custe o que custar, nas 24 horas seguintes.'),(26,'A Família Buscapé',1993,92,'https://br.web.img2.acsta.net/c_310_420/pictures/210/462/21046245_2013100221150118.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Comedia/Familia%20Buscap%C3%A9%20(1993)%201080p%20Dublado%20Dual%20audio/Familia%20Buscap%C3%A9%20(1993)%201080p%20Dublado%20Dual%20audio.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Jed Clampett (Jim Varney) decide se mudar do interior do Arkansas para a luxuosa cidade de Beverly Hills, na Califórnia, quando se torna um bilionário após encontrar petróleo. O caipira ingênuo leva toda sua família para a cidade grande, onde, diante daquele choque cultural, passa a procurar uma esposa.'),(27,'Toy Story - Um Mundo de Aventuras',1995,77,'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/91/05/36/20127436.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Animacao/toy_story.mp4','2025-09-09 00:00:00','2025-09-09 00:00:00','O aniversário de Andy está chegando e os brinquedos estão nervosos. Afinal de contas, eles temem que um novo brinquedo possa substituí-los. Liderados por Woody, um caubói que é também o brinquedo predileto de Andy, eles montam uma escuta que lhes permite saber dos presentes ganhos. Entre eles está Buzz Lightyear, o boneco de um patrulheiro espacial, que logo passa a receber mais atenção do garoto. Isto aos poucos gera ciúmes em Woody, que tenta fazer com que ele caia atrás da cama. Só que o plano dá errado e Buzz cai pela janela. É o início da aventura de Woody, que precisa resgatar Buzz também para limpar sua barra com os outros brinquedos.'),(28,'Festa da Salsicha',2016,89,'https://br.web.img3.acsta.net/c_310_420/pictures/16/09/20/19/46/556589.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/Animacao/Festa%20da%20Salsicha.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Em Festa da Salsicha, dentro de um supermercado, os alimentos pensam que as pessoas são deuses. Eles sonham em serem escolhidos por elas e serem levados para suas casas, onde pensam que viverão felizes. Mas eles nem suspeitam que serão cortados, ralados, cozidos e devorados! Quando Frank, uma salsicha, descobre a terrível verdade, ele precisa convencer os outros alimentos do supermecado  e fazer com que eles lutem contra os humanos.'),(29,'AIR: A História Por Trás do Logo',2023,112,'https://br.web.img3.acsta.net/c_310_420/pictures/23/03/30/20/58/2239461.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/BIOGRAFIA/Air%20-%20A%20Historia%20Por%20Tras%20do%20Logo%202023%20108p%20WEB-DL%20DUAL%205.1.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','AIR: A História Por Trás do Logo é baseado na incrível história real do chefe da marca esportiva e de calçados Nike, Sonny Vaccaro (Matt Damon), e do fundador da Nike, Phil Knight (Ben Affleck). Ambos estão tentando tornar a marca uma das mais famosas do mundo, e escrever seus nomes na história. A dupla então tenta fazer com que a lenda do basquete Michael Jordan endosse seus produtos, ainda na década de 1980. O filme acompanha os esforços incansáveis ​​dos dois membros da Nike para alcançar seus sonhos. E o que era só uma aposta, revolucionou o mundo dos esportes e da cultura contemporânea.'),(30,'Bohemian Rhapsody',2018,135,'https://br.web.img3.acsta.net/c_310_420/pictures/18/08/24/21/29/2341995.jpg','https://weverton.ddns.net:4438/remote.php/dav/files/weverton/BKP%20WEVERTON/FILMES/BIOGRAFIA/Bohemian.Rhapsody.mkv','2025-09-09 00:00:00','2025-09-09 00:00:00','Freddie Mercury (Rami Malek) e seus companheiros Brian May (Gwilyn Lee), Roger Taylor (Ben Hardy) e John Deacon (Joseph Mazzello) mudam o mundo da música para sempre ao formar a banda Queen, durante a década de 1970. Porém, quando o estilo de vida extravagante de Mercury começa a sair do controle, a banda tem que enfrentar o desafio de conciliar a fama e o sucesso com suas vidas pessoais cada vez mais complicadas.');
+/*!40000 ALTER TABLE `filmes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `generos`
+--
+
+DROP TABLE IF EXISTS `generos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `generos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `generos`
+--
+
+LOCK TABLES `generos` WRITE;
+/*!40000 ALTER TABLE `generos` DISABLE KEYS */;
+INSERT INTO `generos` VALUES (1,'AÇÃO','https://iptv4k.com.br/wp-content/uploads/2024/09/filmes-de-acao-1.png','2025-09-09 00:00:00','2025-09-09 00:00:00'),(2,'FICÇÃO','https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/09/22/625248205-7e34ad367a344977813830404797d056.jpg','2025-09-09 00:00:00','2025-09-09 00:00:00'),(3,'TERROR','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtjtnzMhEsXOK9tHLM-6gZaodyBT8on7v7hQ&s','2025-09-09 00:00:00','2025-09-09 00:00:00'),(4,'COMEDIA','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJMSzO4Bmtk4Mi5Yt40CkRVWr574-pBbFW7w&s','2025-09-09 00:00:00','2025-09-09 00:00:00'),(5,'DESENHOS','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSskIi9W2u8IzQPyYZlnrCeXMXI-MafQn2ZT7ga9fR-YuD1IL7BmTpFZ2_USg6nIlho_PY&usqp=CAU','2025-09-09 00:00:00','2025-09-09 00:00:00'),(6,'BIOGRAFIA','https://fragafilms.com.br/wp-content/uploads/2021/04/WhatsApp-Image-2021-04-14-at-13.47.15-768x1024.jpeg','2025-09-09 00:00:00','2025-09-09 00:00:00');
+/*!40000 ALTER TABLE `generos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `cpf` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `cpf` (`cpf`),
+  UNIQUE KEY `email_2` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'netgamby'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-04-10 14:57:02

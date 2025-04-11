@@ -15,16 +15,19 @@ const Cadastro = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [cpf, setCpf] = useState("");
 
   const [nomeError, setNomeError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [cpfError, setCpfError] = useState(false);
 
   const [emailLabel, setEmailLabel] = useState("Email");
   const [nomeLabel, setNomeLabel] = useState("Nome");
   const [passwordLabel, setPasswordLabel] = useState("Senha");
+  const [confirmPasswordLabel, setConfirmPasswordLabel] = useState("Confirmar Senha");
   const [cpfLabel, setCpfLabel] = useState("CPF");
 
   const [successMessage, setSuccessMessage] = useState(false);
@@ -63,11 +66,13 @@ const Cadastro = () => {
     setNomeError(false);
     setEmailError(false);
     setPasswordError(false);
+    setConfirmPasswordError(false);
     setCpfError(false);
 
     setEmailLabel("Email");
     setNomeLabel("Nome");
     setPasswordLabel("Senha");
+    setConfirmPasswordLabel("Confirmar Senha");
     setCpfLabel("CPF");
 
     if (!nome.trim()) {
@@ -98,6 +103,16 @@ const Cadastro = () => {
     } else if (password.length < 6) {
       setPasswordError(true);
       setPasswordLabel("⚠ Mínimo 6 caracteres!");
+      isValid = false;
+    }
+
+    if (!confirmPassword.trim()) {
+      setConfirmPasswordError(true);
+      setConfirmPasswordLabel("⚠ Confirme sua senha!");
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError(true);
+      setConfirmPasswordLabel("⚠ As senhas não coincidem!");
       isValid = false;
     }
 
@@ -152,19 +167,20 @@ const Cadastro = () => {
         setSuccessMessage(true);
         setTimeout(() => navigate("/login"), 2000);
       } else {
+        // reset erros antigos
         setCpfError(false);
         setEmailError(false);
 
         const msg = data.error?.toLowerCase() || "";
 
-        if (msg.includes("cpf")) {
-          setCpfError(true);
-          setCpfLabel(`⚠ ${data.error}`);
-        }
-
         if (msg.includes("email")) {
           setEmailError(true);
           setEmailLabel(`⚠ ${data.error}`);
+        }
+
+        if (msg.includes("cpf")) {
+          setCpfError(true);
+          setCpfLabel(`⚠ ${data.error}`);
         }
 
         if (!msg.includes("cpf") && !msg.includes("email")) {
@@ -180,15 +196,15 @@ const Cadastro = () => {
   return (
     <div className="login-container">
       <Box className="login-box">
-      <Typography
-  variant="h3"
-  className="logo netflix-font"
-  align="center"
-  gutterBottom
-  sx={{ fontFamily: "'Bebas Neue', sans-serif" }}
->
-  CADASTRO
-</Typography>
+        <Typography
+          variant="h3"
+          className="logo netflix-font"
+          align="center"
+          gutterBottom
+          sx={{ fontFamily: "'Bebas Neue', sans-serif" }}
+        >
+          CADASTRO
+        </Typography>
 
         <TextField
           fullWidth
@@ -200,6 +216,7 @@ const Cadastro = () => {
           error={nomeError}
           InputLabelProps={{ style: nomeError ? errorStyle : {} }}
         />
+
         <TextField
           fullWidth
           variant="filled"
@@ -211,6 +228,7 @@ const Cadastro = () => {
           error={emailError}
           InputLabelProps={{ style: emailError ? errorStyle : {} }}
         />
+
         <TextField
           fullWidth
           variant="filled"
@@ -222,6 +240,19 @@ const Cadastro = () => {
           error={passwordError}
           InputLabelProps={{ style: passwordError ? errorStyle : {} }}
         />
+
+        <TextField
+          fullWidth
+          variant="filled"
+          label={confirmPasswordLabel}
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="input-field"
+          error={confirmPasswordError}
+          InputLabelProps={{ style: confirmPasswordError ? errorStyle : {} }}
+        />
+
         <TextField
           fullWidth
           variant="filled"
@@ -233,6 +264,7 @@ const Cadastro = () => {
           error={cpfError}
           InputLabelProps={{ style: cpfError ? errorStyle : {} }}
         />
+
         <Button
           fullWidth
           variant="contained"
@@ -241,6 +273,7 @@ const Cadastro = () => {
         >
           Cadastrar
         </Button>
+
         <Typography className="forgot-text">
           <a href="/login">Já tem uma conta? Faça login</a>
         </Typography>
